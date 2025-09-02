@@ -1,4 +1,5 @@
 import { google } from 'googleapis'
+import { getGoogleCredentials } from './runtime-config'
 
 // Google Sheets configuration
 const SPREADSHEET_ID = process.env.GOOGLE_SPREADSHEET_ID
@@ -7,18 +8,19 @@ const SHEET_NAME = 'Contact Submissions'
 // Create Google Sheets service
 export const createGoogleSheetsService = () => {
   try {
+    const rc = getGoogleCredentials()
     // Using service account credentials from environment variables
     const credentials = {
       type: 'service_account',
-      project_id: process.env.GOOGLE_PROJECT_ID,
-      private_key_id: process.env.GOOGLE_PRIVATE_KEY_ID,
-      private_key: process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-      client_email: process.env.GOOGLE_CLIENT_EMAIL,
-      client_id: process.env.GOOGLE_CLIENT_ID,
+      project_id: rc.GOOGLE_PROJECT_ID || process.env.GOOGLE_PROJECT_ID,
+      private_key_id: rc.GOOGLE_PRIVATE_KEY_ID || process.env.GOOGLE_PRIVATE_KEY_ID,
+      private_key: (rc.GOOGLE_PRIVATE_KEY || process.env.GOOGLE_PRIVATE_KEY)?.replace(/\\n/g, '\n'),
+      client_email: rc.GOOGLE_CLIENT_EMAIL || process.env.GOOGLE_CLIENT_EMAIL,
+      client_id: rc.GOOGLE_CLIENT_ID || process.env.GOOGLE_CLIENT_ID,
       auth_uri: 'https://accounts.google.com/o/oauth2/auth',
       token_uri: 'https://oauth2.googleapis.com/token',
       auth_provider_x509_cert_url: 'https://www.googleapis.com/oauth2/v1/certs',
-      client_x509_cert_url: `https://www.googleapis.com/robot/v1/metadata/x509/${process.env.GOOGLE_CLIENT_EMAIL}`
+      client_x509_cert_url: `https://www.googleapis.com/robot/v1/metadata/x509/${rc.GOOGLE_CLIENT_EMAIL || process.env.GOOGLE_CLIENT_EMAIL}`
     }
 
     const auth = new google.auth.GoogleAuth({
@@ -43,7 +45,8 @@ export const addToGoogleSheet = async (data: {
   try {
     const sheets = createGoogleSheetsService()
 
-    if (!SPREADSHEET_ID) {
+  const spreadsheetId = rc.GOOGLE_SPREADSHEET_ID || SPREADSHEET_ID
+  if (!spreadsheetId) {
       throw new Error('Google Spreadsheet ID not configured')
     }
 
@@ -53,7 +56,7 @@ export const addToGoogleSheet = async (data: {
       const values = [[data.name, data.email, data.issue, data.timestamp]]
 
       const response = await sheets.spreadsheets.values.append({
-        spreadsheetId: SPREADSHEET_ID,
+        spreadsheetId,
         range: `${SHEET_NAME}!A:D`,
         valueInputOption: 'RAW',
         insertDataOption: 'INSERT_ROWS',
@@ -65,7 +68,7 @@ export const addToGoogleSheet = async (data: {
       return {
         success: true,
         data: response.data,
-        spreadsheetUrl: `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}`
+  spreadsheetUrl: `https://docs.google.com/spreadsheets/d/${spreadsheetId}`
       }
     } catch (appendError: any) {
       // If append fails, it might be because sheet doesn't exist
@@ -75,7 +78,7 @@ export const addToGoogleSheet = async (data: {
         
         // Create sheet with headers
         await sheets.spreadsheets.batchUpdate({
-          spreadsheetId: SPREADSHEET_ID,
+          spreadsheetId,
           requestBody: {
             requests: [
               {
@@ -91,7 +94,7 @@ export const addToGoogleSheet = async (data: {
 
         // Add headers
         await sheets.spreadsheets.values.update({
-          spreadsheetId: SPREADSHEET_ID,
+          spreadsheetId,
           range: `${SHEET_NAME}!A1:D1`,
           valueInputOption: 'RAW',
           requestBody: {
@@ -103,7 +106,7 @@ export const addToGoogleSheet = async (data: {
         const values = [[data.name, data.email, data.issue, data.timestamp]]
 
         const response = await sheets.spreadsheets.values.append({
-          spreadsheetId: SPREADSHEET_ID,
+          spreadsheetId,
           range: `${SHEET_NAME}!A:D`,
           valueInputOption: 'RAW',
           insertDataOption: 'INSERT_ROWS',
@@ -115,7 +118,7 @@ export const addToGoogleSheet = async (data: {
         return {
           success: true,
           data: response.data,
-          spreadsheetUrl: `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}`
+          spreadsheetUrl: `https://docs.google.com/spreadsheets/d/${spreadsheetId}`
         }
       } else {
         throw appendError
@@ -129,7 +132,7 @@ export const addToGoogleSheet = async (data: {
       throw new Error(`Permission denied: The service account '${process.env.GOOGLE_CLIENT_EMAIL}' doesn't have access to the spreadsheet. Please share the spreadsheet with this email address and give it Editor permissions.`)
     } else if (error.code === 404) {
       throw new Error(`Spreadsheet not found: The spreadsheet ID '${SPREADSHEET_ID}' doesn't exist or isn't accessible.`)
-    } else if (!SPREADSHEET_ID) {
+  } else if (!(getGoogleCredentials().GOOGLE_SPREADSHEET_ID || SPREADSHEET_ID)) {
       throw new Error('Google Spreadsheet ID not configured in environment variables.')
     }
     
@@ -142,12 +145,14 @@ export const getFromGoogleSheet = async () => {
   try {
     const sheets = createGoogleSheetsService()
 
-    if (!SPREADSHEET_ID) {
+  const rc = getGoogleCredentials()
+  const spreadsheetId = rc.GOOGLE_SPREADSHEET_ID || SPREADSHEET_ID
+  if (!spreadsheetId) {
       throw new Error('Google Spreadsheet ID not configured')
     }
 
     const response = await sheets.spreadsheets.values.get({
-      spreadsheetId: SPREADSHEET_ID,
+      spreadsheetId,
       range: `${SHEET_NAME}!A:D`,
     })
 
@@ -166,7 +171,7 @@ export const getFromGoogleSheet = async () => {
     return {
       success: true,
       data,
-      spreadsheetUrl: `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}`
+      spreadsheetUrl: `https://docs.google.com/spreadsheets/d/${spreadsheetId}`
     }
   } catch (error: any) {
     console.error('Error reading from Google Sheets:', error)
@@ -176,7 +181,7 @@ export const getFromGoogleSheet = async () => {
       throw new Error(`Permission denied: The service account '${process.env.GOOGLE_CLIENT_EMAIL}' doesn't have access to the spreadsheet. Please share the spreadsheet with this email address and give it Editor permissions.`)
     } else if (error.code === 404) {
       throw new Error(`Spreadsheet not found: The spreadsheet ID '${SPREADSHEET_ID}' doesn't exist or isn't accessible.`)
-    } else if (!SPREADSHEET_ID) {
+  } else if (!(getGoogleCredentials().GOOGLE_SPREADSHEET_ID || SPREADSHEET_ID)) {
       throw new Error('Google Spreadsheet ID not configured in environment variables.')
     }
     

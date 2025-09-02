@@ -12,10 +12,110 @@ interface ContactSubmission {
   timestamp: string
 }
 
+interface TrainingSystemStatus {
+  healthy: boolean
+  error?: string
+  knowledgeBaseSize?: number
+}
+
 export default function AdminPage() {
   const [submissions, setSubmissions] = useState<ContactSubmission[]>([])
   const [loading, setLoading] = useState(true)
   const [googleSheetsUrl, setGoogleSheetsUrl] = useState<string>('')
+  const [trainingStatus, setTrainingStatus] = useState<TrainingSystemStatus>({ healthy: false })
+  const [retraining, setRetraining] = useState(false)
+  const [apiKey, setApiKey] = useState("")
+  const [savingKey, setSavingKey] = useState(false)
+  const [googleForm, setGoogleForm] = useState({
+    GOOGLE_SPREADSHEET_ID: '',
+    GOOGLE_PROJECT_ID: '',
+    GOOGLE_PRIVATE_KEY_ID: '',
+    GOOGLE_PRIVATE_KEY: '',
+    GOOGLE_CLIENT_EMAIL: '',
+    GOOGLE_CLIENT_ID: ''
+  })
+  const [savingGoogle, setSavingGoogle] = useState(false)
+
+  const checkTrainingSystemStatus = async () => {
+    try {
+      const response = await fetch('/api/admin/retrain')
+      if (response.ok) {
+        const data = await response.json()
+        setTrainingStatus(data.pythonSystem)
+      } else {
+        setTrainingStatus({ healthy: false, error: 'API request failed' })
+      }
+    } catch (error) {
+      setTrainingStatus({ healthy: false, error: 'Connection failed' })
+    }
+  }
+
+  const triggerRetraining = async () => {
+    try {
+      setRetraining(true)
+      const response = await fetch('/api/admin/retrain', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+  body: JSON.stringify({ force: true })
+      })
+
+      const data = await response.json()
+      
+      if (data.success) {
+        alert(`Retraining initiated successfully! Job ID: ${data.jobId}`)
+      } else {
+        alert(`Retraining failed: ${data.error}`)
+      }
+    } catch (error) {
+      alert('Failed to trigger retraining')
+    } finally {
+      setRetraining(false)
+    }
+  }
+
+  const saveApiKey = async () => {
+    try {
+      setSavingKey(true)
+      const res = await fetch('/api/admin/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ provider: 'openai', apiKey })
+      })
+      const data = await res.json()
+      if (!data.success) {
+        alert(`Failed to save API key: ${data.error || 'Unknown error'}`)
+      } else {
+        alert('API key saved in Python service for this session')
+      }
+    } catch (e) {
+      alert('Error saving API key')
+    } finally {
+      setSavingKey(false)
+    }
+  }
+
+  const saveGoogleCreds = async () => {
+    try {
+      setSavingGoogle(true)
+      const res = await fetch('/api/admin/google', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(googleForm)
+      })
+      const data = await res.json()
+      if (!data.success) {
+        alert(`Failed to save Google credentials: ${data.error || 'Unknown error'}`)
+      } else {
+        alert('Google credentials saved for this server session')
+      }
+    } catch (e) {
+      alert('Error saving Google credentials')
+    } finally {
+      setSavingGoogle(false)
+    }
+  }
 
   const openGoogleSheets = () => {
     if (googleSheetsUrl) {
@@ -49,6 +149,11 @@ export default function AdminPage() {
 
   useEffect(() => {
     loadSubmissions()
+    checkTrainingSystemStatus()
+    
+    // Check training system status every 30 seconds
+    const interval = setInterval(checkTrainingSystemStatus, 30000)
+    return () => clearInterval(interval)
   }, [])
 
   return (
@@ -56,29 +161,100 @@ export default function AdminPage() {
       <Card>
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-center">
-            ArvoCap Contact Submissions Admin
+            ArvoCap Admin Dashboard
           </CardTitle>
           <div className="flex justify-center gap-2">
             <Badge variant="secondary">Google Sheets Integration</Badge>
+            <Badge variant="outline">AI Training System</Badge>
             <Badge variant="outline">Excel Backup</Badge>
           </div>
         </CardHeader>
         <CardContent className="space-y-6">
+          {/* Training System Status */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">🤖 AI Training System</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <div className={`w-3 h-3 rounded-full ${trainingStatus.healthy ? 'bg-green-500' : 'bg-red-500'}`}></div>
+                  <span className="font-medium">
+                    {trainingStatus.healthy ? 'Connected' : 'Disconnected'}
+                  </span>
+                </div>
+                <Button
+                  onClick={checkTrainingSystemStatus}
+                  variant="outline"
+                  size="sm"
+                >
+                  Refresh Status
+                </Button>
+              </div>
+              {typeof trainingStatus.knowledgeBaseSize === 'number' && (
+                <p className="text-sm text-muted-foreground mb-2">Knowledge Base Items: {trainingStatus.knowledgeBaseSize}</p>
+              )}
+              {trainingStatus.error && (
+                <p className="text-sm text-red-600 mb-4">
+                  Error: {trainingStatus.error}
+                </p>
+              )}
+              
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <Button
+                  onClick={triggerRetraining}
+                  disabled={!trainingStatus.healthy || retraining}
+                  className="w-full"
+                >
+                  {retraining ? 'Retraining...' : 'Retrain Knowledge Base'}
+                </Button>
+                <Button
+                  onClick={() => window.open('http://localhost:8000/docs', '_blank')}
+                  variant="outline"
+                  className="w-full"
+                >
+                  View API Docs
+                </Button>
+              </div>
+
+              <div className="mt-2">
+                <label className="block text-sm font-medium mb-2">OpenAI API Key</label>
+                <input
+                  type="password"
+                  placeholder="sk-..."
+                  value={apiKey}
+                  onChange={(e) => setApiKey(e.target.value)}
+                  className="w-full border rounded px-3 py-2 text-sm"
+                />
+                <div className="flex justify-end mt-2">
+                  <Button onClick={saveApiKey} disabled={!apiKey || savingKey} size="sm">
+                    {savingKey ? 'Saving...' : 'Save API Key'}
+                  </Button>
+                </div>
+                <p className="text-xs text-muted-foreground mt-2">This stores the key in memory on the Python service for the current session.</p>
+              </div>
+            </CardContent>
+          </Card>
+
           <div className="grid md:grid-cols-2 gap-4">
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg">📊 Google Sheets (Primary)</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Real-time data synced to Google Sheets for easy sharing and collaboration.
-                </p>
-                <Button 
-                  onClick={openGoogleSheets}
-                  className="w-full bg-green-600 hover:bg-green-700"
-                >
-                  Open Google Sheets
-                </Button>
+                <p className="text-sm text-muted-foreground mb-4">Enter your Google service account credentials. These are stored in memory on the server for the current session.</p>
+                <div className="space-y-2">
+                  <input className="w-full border rounded px-3 py-2 text-sm" placeholder="GOOGLE_SPREADSHEET_ID" value={googleForm.GOOGLE_SPREADSHEET_ID} onChange={e=>setGoogleForm({...googleForm, GOOGLE_SPREADSHEET_ID: e.target.value})} />
+                  <input className="w-full border rounded px-3 py-2 text-sm" placeholder="GOOGLE_PROJECT_ID" value={googleForm.GOOGLE_PROJECT_ID} onChange={e=>setGoogleForm({...googleForm, GOOGLE_PROJECT_ID: e.target.value})} />
+                  <input className="w-full border rounded px-3 py-2 text-sm" placeholder="GOOGLE_PRIVATE_KEY_ID" value={googleForm.GOOGLE_PRIVATE_KEY_ID} onChange={e=>setGoogleForm({...googleForm, GOOGLE_PRIVATE_KEY_ID: e.target.value})} />
+                  <textarea className="w-full border rounded px-3 py-2 text-sm" placeholder="GOOGLE_PRIVATE_KEY (paste full key)" value={googleForm.GOOGLE_PRIVATE_KEY} onChange={e=>setGoogleForm({...googleForm, GOOGLE_PRIVATE_KEY: e.target.value})} />
+                  <input className="w-full border rounded px-3 py-2 text-sm" placeholder="GOOGLE_CLIENT_EMAIL" value={googleForm.GOOGLE_CLIENT_EMAIL} onChange={e=>setGoogleForm({...googleForm, GOOGLE_CLIENT_EMAIL: e.target.value})} />
+                  <input className="w-full border rounded px-3 py-2 text-sm" placeholder="GOOGLE_CLIENT_ID" value={googleForm.GOOGLE_CLIENT_ID} onChange={e=>setGoogleForm({...googleForm, GOOGLE_CLIENT_ID: e.target.value})} />
+                  <div className="flex gap-2">
+                    <Button onClick={saveGoogleCreds} disabled={savingGoogle} className="w-full">{savingGoogle ? 'Saving...' : 'Save Google Credentials'}</Button>
+                    <Button onClick={openGoogleSheets} variant="outline" className="w-full">Open Google Sheet</Button>
+                  </div>
+                </div>
               </CardContent>
             </Card>
 
@@ -106,7 +282,7 @@ export default function AdminPage() {
             <div className="text-sm text-muted-foreground space-y-2">
               <p><strong>To connect Google Sheets:</strong></p>
               <ol className="list-decimal list-inside space-y-1 ml-4">
-                <li>Go to <a href="https://console.cloud.google.com/" target="_blank" className="text-blue-600 underline">Google Cloud Console</a></li>
+                <li>Go to <a href="https://console.cloud.google.com/" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">Google Cloud Console</a></li>
                 <li>Create a new project or select existing one</li>
                 <li>Enable the Google Sheets API</li>
                 <li>Create a Service Account and download the JSON key file</li>

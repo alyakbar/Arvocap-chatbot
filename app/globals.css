@@ -1,3 +1,7 @@
+/* Typing indicator animation delay helpers */
+.typing-dot.delay-0 { animation-delay: 0ms; }
+.typing-dot.delay-150 { animation-delay: 150ms; }
+.typing-dot.delay-300 { animation-delay: 300ms; }
 @import "tailwindcss";
 @import "tw-animate-css";
 

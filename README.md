@@ -1,180 +1,570 @@
-# ArvoCap Investment Chatbot
+# Arvocap Intelligent Chatbot System
 
-A sophisticated AI-powered chatbot for ArvoCap investment services, built with Next.js and featuring automated contact management through Google Sheets integration.
+A comprehensive AI-powered chatbot solution for Arvocap Asset Managers, featuring a modern web interface, trained knowledge base, and administrative dashboard. The system provides investment advice, fund performance data, and client support through multiple interfaces.
 
-## 🚀 Features
+## 🌟 Features
 
-### Intelligent Chat System
-- **AI-Powered Responses**: Utilizes OpenAI's GPT models to provide intelligent responses about investment services
-- **FAQ Knowledge Base**: Pre-built responses for common investment questions
-- **Contextual Understanding**: Understands investment-related queries and provides relevant information
-- **Multi-step Conversations**: Maintains conversation context for better user experience
+### 🤖 AI-Powered Chatbot
+- **Trained Knowledge Base**: Custom-trained on Arvocap's investment data and fund performance
+- **Dual AI Integration**: OpenAI GPT models with ChromaDB vector database
+- **Intelligent Responses**: Context-aware answers about investment strategies and fund performance
+- **Multiple Interfaces**: Web chat, CLI tool, and REST API
 
-### Smart Contact Form
-- **Automatic Trigger**: Contact form appears when the bot can't answer specific questions
-- **3-Step Process**: Streamlined name, email, and issue collection
-- **Instant Feedback**: Optimistic UI provides immediate confirmation to users
-- **Background Processing**: Data saving happens asynchronously without blocking user interaction
+### 🎨 Modern Web Interface
+- **Next.js Frontend**: Responsive, modern UI with TypeScript
+- **Real-time Chat**: Instant messaging with typing indicators and message history
+- **Professional Design**: Tailwind CSS with shadcn/ui components
+- **Mobile Responsive**: Works seamlessly across desktop and mobile devices
 
-### Data Management
-- **Google Sheets Integration**: Automatically saves contact submissions to Google Sheets
-- **Excel Backup**: Creates local Excel backups of all submissions
-- **Real-time Sync**: Data is synchronized across multiple storage systems
-- **Admin Dashboard**: View and manage contact submissions at `/admin`
+### 🔧 Administrative Dashboard
+- **Training Management**: Retrain the chatbot with new data
+- **API Key Management**: Configure OpenAI and other service credentials
+- **Knowledge Base Stats**: Monitor vector database size and performance
+- **Google Sheets Integration**: Import/export contact submissions
 
-### Performance Optimizations
-- **Instant Form Submission**: Users see immediate feedback without waiting
-- **Asynchronous Processing**: Background operations don't block user interactions
-- **Optimized API Calls**: Reduced Google Sheets API calls for faster performance
-- **Error Handling**: Graceful fallbacks when services are unavailable
+### 📊 Data Management
+- **Vector Database**: ChromaDB for semantic search and document retrieval
+- **Web Scraping**: Automated data collection from investment sources
+- **Text Processing**: Advanced NLP for document processing and embedding
+- **Contact Management**: Integrated contact form with Google Sheets export
 
-## 🛠 Tech Stack
-
-- **Framework**: Next.js 15.2.4
-- **Frontend**: React with TypeScript
-- **Styling**: Tailwind CSS + shadcn/ui components
-- **AI Integration**: OpenAI API
-- **Database**: Google Sheets API
-- **File Processing**: XLSX for Excel file handling
-- **Development**: TypeScript, ESLint
-
-## 📁 Project Structure
+## 🏗️ Architecture
 
 ```
-├── app/
-│   ├── page.tsx              # Main page
-│   ├── layout.tsx            # Root layout
-│   ├── admin/                # Admin dashboard
-│   └── api/
-│       ├── chat/             # AI chat endpoint
-│       ├── contact/          # Contact form endpoint
-│       └── save-contact/     # Data saving endpoint
-├── components/
-│   ├── arvocap-chatbot.tsx   # Main chatbot component
-│   ├── contact-form.tsx      # Contact form component
-│   └── ui/                   # Reusable UI components
-├── lib/
-│   ├── google-sheets.ts      # Google Sheets integration
-│   └── utils.ts              # Utility functions
-└── public/
-    └── contact-submissions.xlsx  # Excel backup file
+┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
+│   Web Frontend  │    │   Python API     │    │  Vector Database│
+│   (Next.js)     │◄──►│   (FastAPI)      │◄──►│   (ChromaDB)    │
+│                 │    │                  │    │                 │
+│  ┌─────────────┐│    │ ┌──────────────┐ │    │ ┌─────────────┐ │
+│  │  Chat UI    ││    │ │ ChatBot      │ │    │ │ Embeddings  │ │
+│  │  Admin UI   ││    │ │ Interface    │ │    │ │ & Search    │ │
+│  │  Contact    ││    │ │ Knowledge    │ │    │ │             │ │
+│  │  Form       ││    │ │ Base         │ │    │ │             │ │
+│  └─────────────┘│    │ └──────────────┘ │    │ └─────────────┘ │
+└─────────────────┘    └──────────────────┘    └─────────────────┘
+         │                       │                       │
+         │              ┌──────────────────┐            │
+         └─────────────►│   OpenAI API     │◄───────────┘
+                        │   (GPT Models)   │
+                        └──────────────────┘
 ```
 
-## 🔧 Setup Instructions
+## 🚀 Quick Start
 
 ### Prerequisites
-- Node.js 18+ and pnpm
-- Google Cloud Console account
-- OpenAI API account
+- **Node.js** 18+ with pnpm/npm
+- **Python** 3.9+
+- **OpenAI API Key**
+- **Git**
 
-### Environment Variables
-Create a `.env.local` file with:
-
+### 1. Clone Repository
 ```bash
-# OpenAI Configuration
-OPENAI_API_KEY=your_openai_api_key
+git clone <repository-url>
+cd arvocap-chatbot
+```
 
-# Google Sheets Configuration
+### 2. Setup Frontend
+```bash
+# Install dependencies
+pnpm install
+
+# Configure environment
+cp .env.example .env.local
+# Edit .env.local with your API keys
+```
+
+### 3. Setup Python Backend
+```bash
+cd python_training
+
+# Create virtual environment
+python -m venv env
+
+# Activate virtual environment
+# Windows:
+.\env\Scripts\activate
+# macOS/Linux:
+source env/bin/activate
+
+# Install dependencies
+pip install -r requirements.txt
+```
+
+### 4. Configure Environment Variables
+
+Create `.env.local` in the root directory:
+```env
+# OpenAI Configuration
+OPENAI_API_KEY=your_openai_api_key_here
+
+# Python API Configuration
+PYTHON_API_URL=http://localhost:8000
+NEXT_PUBLIC_PYTHON_API_URL=http://localhost:8000
+
+# Google Sheets Integration (Optional)
 GOOGLE_SPREADSHEET_ID=your_spreadsheet_id
 GOOGLE_PROJECT_ID=your_project_id
-GOOGLE_PRIVATE_KEY_ID=your_private_key_id
-GOOGLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nyour_private_key\n-----END PRIVATE KEY-----"
+GOOGLE_PRIVATE_KEY_ID=your_key_id
+GOOGLE_PRIVATE_KEY="your_private_key"
 GOOGLE_CLIENT_EMAIL=your_service_account_email
 GOOGLE_CLIENT_ID=your_client_id
 ```
 
-### Installation
+### 5. Initialize Knowledge Base
+```bash
+cd python_training
 
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd arvocap-chatbot
-   ```
+# Process and load training data
+python main.py
 
-2. **Install dependencies**
-   ```bash
-   pnpm install
-   ```
+# Test the CLI interface
+python chat_cli.py
+```
 
-3. **Set up Google Sheets** (see `GOOGLE_SHEETS_SETUP.md` for detailed instructions)
-   - Create Google Cloud project
-   - Enable Google Sheets API
-   - Create service account
-   - Share spreadsheet with service account email
+### 6. Start Services
 
-4. **Run development server**
-   ```bash
-   pnpm dev
-   ```
+**Terminal 1 - Python API Server:**
+```bash
+cd python_training
+.\env\Scripts\activate  # Windows
+python api_server.py
+```
 
-5. **Open in browser**
-   Navigate to `http://localhost:3000`
+**Terminal 2 - Next.js Frontend:**
+```bash
+pnpm dev
+```
 
-## 🎯 How It Works
+### 7. Access the Application
+- **Web Interface**: http://localhost:3000
+- **Admin Dashboard**: http://localhost:3000/admin
+- **API Documentation**: http://localhost:8000/docs
 
-### Chat Flow
-1. User opens the chatbot interface
-2. User types investment-related questions
-3. Bot searches FAQ knowledge base for matches
-4. If match found: Provides pre-written response
-5. If no match: Uses OpenAI API for intelligent response
-6. If bot can't help: Automatically shows contact form
+## 📁 Project Structure
 
-### Contact Form Process
-1. User fills out 3-step form (name, email, issue)
-2. Form shows instant success message (optimistic UI)
-3. Data saves to Google Sheets in background
-4. Excel backup created asynchronously
-5. Admin can view submissions at `/admin`
+```
+arvocap-chatbot/
+├── 📁 app/                          # Next.js app directory
+│   ├── 📁 admin/                    # Admin dashboard pages
+│   ├── 📁 api/                      # API routes (Next.js)
+│   │   ├── 📁 chat/                 # Chat API endpoints
+│   │   ├── 📁 chatbot-knowledge/    # Knowledge base search
+│   │   └── 📁 contact/              # Contact form handling
+│   ├── globals.css                  # Global styles
+│   ├── layout.tsx                   # Root layout
+│   └── page.tsx                     # Homepage
+├── 📁 components/                   # React components
+│   ├── arvocap-chatbot.tsx          # Main chat interface
+│   ├── contact-form.tsx             # Contact form component
+│   └── 📁 ui/                       # UI component library
+├── 📁 lib/                          # Utility libraries
+│   ├── google-sheets.ts             # Google Sheets integration
+│   ├── training-bridge.ts           # Python-NextJS bridge
+│   └── utils.ts                     # Helper utilities
+├── 📁 python_training/              # Python backend
+│   ├── 📁 data/                     # Training and processed data
+│   ├── 📁 env/                      # Python virtual environment
+│   ├── 📁 logs/                     # Application logs
+│   ├── 📁 models/                   # Trained AI models
+│   ├── 📁 vector_db/                # ChromaDB database files
+│   ├── api_server.py                # FastAPI server
+│   ├── chatbot_trainer.py           # AI training logic
+│   ├── chat_cli.py                  # Command-line interface
+│   ├── config.py                    # Configuration settings
+│   ├── main.py                      # Main training script
+│   ├── text_processor.py            # Text processing utilities
+│   ├── vector_database.py           # Vector database management
+│   ├── web_scraper.py               # Data collection tools
+│   └── requirements.txt             # Python dependencies
+├── 📁 public/                       # Static assets
+├── 📁 styles/                       # Additional stylesheets
+├── .env.local                       # Environment configuration
+├── package.json                     # Node.js dependencies
+└── README.md                        # This file
+```
 
-### Data Storage
-- **Primary**: Google Sheets (real-time collaboration)
-- **Backup**: Local Excel file (downloadable)
-- **Access**: Admin dashboard for easy management
+## 🔧 Configuration
 
-## 📊 Performance Features
+### OpenAI API Setup
+1. Get API key from [OpenAI Platform](https://platform.openai.com/api-keys)
+2. Add to `.env.local`: `OPENAI_API_KEY=sk-...`
+3. Configure in admin dashboard or directly in environment
 
-- **Sub-second response time** for form submissions
-- **Optimistic UI** for immediate user feedback
-- **Background processing** for data operations
-- **Fallback systems** for reliability
-- **Minimal API calls** for efficiency
+### Google Sheets Integration
+1. Create Google Cloud Project
+2. Enable Google Sheets API
+3. Create Service Account
+4. Download credentials JSON
+5. Extract values to environment variables
+6. Share spreadsheet with service account email
 
-## 🔐 Security
+### Vector Database Configuration
+The system uses ChromaDB for semantic search:
+- **Embedding Model**: `sentence-transformers/all-MiniLM-L6-v2`
+- **Storage**: Local persistent storage
+- **Collection**: Configurable name and metadata
 
-- Service account authentication for Google Sheets
-- Environment variable protection for API keys
-- Input validation and sanitization
-- Error handling without exposing sensitive data
+### Training Data Setup
+1. Place training documents in `python_training/data/`
+2. Supported formats: JSON, JSONL, TXT, PDF
+3. Run `python main.py` to process and vectorize
+4. Monitor progress in logs and admin dashboard
+
+## 🖥️ Usage
+
+### Web Interface
+1. Navigate to http://localhost:3000
+2. Use the chat interface to ask questions
+3. Get responses from trained knowledge base
+4. Submit contact information via contact form
+
+### CLI Interface
+```bash
+cd python_training
+python chat_cli.py
+
+# Options:
+python chat_cli.py --openai      # Use OpenAI (default)
+python chat_cli.py --local       # Use local model
+```
+
+### Admin Dashboard
+1. Access at http://localhost:3000/admin
+2. **Set API Keys**: Configure OpenAI credentials
+3. **Retrain Model**: Process new training data
+4. **View Stats**: Monitor knowledge base size
+5. **Manage Data**: Import/export functionality
+
+### API Endpoints
+
+**Python FastAPI (Port 8000):**
+```http
+POST /chat                    # Chat with trained bot
+POST /search                  # Vector similarity search
+GET  /health                  # Health check
+POST /admin/set_api_key      # Set API credentials
+POST /retrain                # Retrain knowledge base
+GET  /knowledge/stats        # Knowledge base statistics
+```
+
+**Next.js API Routes (Port 3000):**
+```http
+POST /api/chat               # Chat endpoint (fallback)
+POST /api/chatbot-knowledge  # Knowledge search
+POST /api/contact            # Contact form submission
+POST /api/save-contact       # Save contact to sheets
+```
+
+## 🧠 AI Training
+
+### Data Sources
+- **Investment Reports**: Fund performance and analysis
+- **Company Documentation**: Services and policies
+- **Market Research**: Investment strategies and insights
+- **Client FAQs**: Common questions and responses
+
+### Training Process
+1. **Data Collection**: Web scraping and manual input
+2. **Text Processing**: Cleaning, tokenization, and chunking
+3. **Embedding Generation**: Convert text to vectors
+4. **Vector Storage**: Store in ChromaDB for retrieval
+5. **Model Training**: Fine-tune responses with context
+
+### Retraining
+```bash
+# Add new data to python_training/data/
+python main.py
+
+# Or use admin dashboard:
+# 1. Upload new files
+# 2. Click "Retrain Model"
+# 3. Monitor progress
+```
+
+## 🔄 API Integration
+
+### ChatBot Interface
+```python
+from chatbot_trainer import ChatbotInterface
+
+# Initialize
+bot = ChatbotInterface(use_openai=True)
+
+# Generate response
+response = bot.generate_response("What are your investment options?")
+```
+
+### Vector Search
+```python
+from vector_database import ChatbotKnowledgeBase
+
+# Initialize
+kb = ChatbotKnowledgeBase()
+
+# Search similar content
+results = kb.search_similar_content("fund performance", max_results=5)
+```
+
+### Web Integration
+```javascript
+// Frontend chat integration
+const response = await fetch('/api/chat', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    message: userMessage,
+    conversation_id: sessionId
+  })
+});
+
+const data = await response.json();
+console.log(data.message);
+```
 
 ## 🚀 Deployment
 
-The application is optimized for deployment on Vercel:
+### Production Setup
 
-1. Connect your GitHub repository to Vercel
-2. Add environment variables in Vercel dashboard
-3. Deploy automatically on git push
+**Frontend (Vercel/Netlify):**
+```bash
+# Build for production
+pnpm build
 
-## 📈 Admin Features
+# Deploy to Vercel
+vercel deploy
 
-Access the admin panel at `/admin` to:
-- View all contact submissions
-- Download Excel exports
-- Check Google Sheets integration status
-- Monitor system health
+# Set environment variables in dashboard
+```
+
+**Backend (Railway/Heroku/VPS):**
+```bash
+# Create requirements.txt
+pip freeze > requirements.txt
+
+# Create Procfile
+echo "web: uvicorn api_server:app --host=0.0.0.0 --port=\$PORT" > Procfile
+
+# Deploy to platform
+```
+
+### Environment Variables (Production)
+```env
+# Required
+OPENAI_API_KEY=
+PYTHON_API_URL=https://your-api-domain.com
+NEXT_PUBLIC_PYTHON_API_URL=https://your-api-domain.com
+
+# Optional
+GOOGLE_SPREADSHEET_ID=
+GOOGLE_PRIVATE_KEY=
+# ... other Google Sheets vars
+```
+
+### Database Migration
+```bash
+# Backup local vector database
+tar -czf vector_db_backup.tar.gz python_training/vector_db/
+
+# Transfer to production server
+scp vector_db_backup.tar.gz user@server:/path/to/app/
+
+# Extract on production
+tar -xzf vector_db_backup.tar.gz
+```
+
+## 🛠️ Development
+
+### Code Style
+- **Frontend**: TypeScript, ESLint, Prettier
+- **Backend**: Python Black, isort, pylint
+- **Commits**: Conventional commit messages
+
+### Testing
+```bash
+# Frontend tests
+pnpm test
+
+# Backend tests
+cd python_training
+python -m pytest test_*.py
+
+# API tests
+python test_api_server.py
+```
+
+### Development Workflow
+1. Create feature branch
+2. Implement changes
+3. Test locally (web + CLI)
+4. Run test suite
+5. Create pull request
+6. Deploy to staging
+7. Merge to main
+
+### Adding New Features
+
+**Frontend Component:**
+```typescript
+// components/new-feature.tsx
+import { useState } from 'react';
+
+export function NewFeature() {
+  // Component logic
+}
+```
+
+**API Endpoint:**
+```python
+# python_training/api_server.py
+@app.post("/new-endpoint")
+async def new_feature(request: NewRequest):
+    # Endpoint logic
+    return {"result": "success"}
+```
+
+**Training Data:**
+```python
+# python_training/custom_processor.py
+def process_new_data_type(file_path: str):
+    # Custom processing logic
+    return processed_data
+```
+
+## 🐛 Troubleshooting
+
+### Common Issues
+
+**1. "Knowledge base is empty" Error**
+```bash
+# Solution: Retrain the model
+cd python_training
+python main.py
+```
+
+**2. OpenAI API Errors**
+```bash
+# Check API key validity
+curl -H "Authorization: Bearer $OPENAI_API_KEY" https://api.openai.com/v1/models
+
+# Verify environment variables
+echo $OPENAI_API_KEY
+```
+
+**3. Vector Database Issues**
+```bash
+# Reset vector database
+rm -rf python_training/vector_db/
+python main.py  # Recreate from scratch
+```
+
+**4. CORS Errors**
+- Check API server CORS configuration
+- Verify frontend URL in allowed origins
+- Ensure proper headers in requests
+
+**5. Performance Issues**
+- Reduce vector search results count
+- Optimize embedding model
+- Implement caching for frequent queries
+
+### Debug Mode
+```bash
+# Enable debug logging
+export LOG_LEVEL=DEBUG
+
+# Frontend debug
+export NODE_ENV=development
+export NEXT_PUBLIC_DEBUG=true
+
+# Python debug
+python -u api_server.py
+```
+
+## 📊 Monitoring
+
+### Key Metrics
+- **Response Time**: API endpoint latency
+- **Knowledge Base Size**: Number of embedded documents
+- **User Engagement**: Chat session duration and frequency
+- **Error Rates**: API failures and timeouts
+
+### Logging
+```bash
+# View API server logs
+tail -f python_training/logs/api_server.log
+
+# Frontend logs (browser console)
+# Network tab for API calls
+# Application tab for local storage
+```
+
+### Health Checks
+```bash
+# API health
+curl http://localhost:8000/health
+
+# Frontend health
+curl http://localhost:3000/api/health
+```
 
 ## 🤝 Contributing
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
+We welcome contributions! Please see our contributing guidelines:
+
+1. **Fork** the repository
+2. **Create** a feature branch
+3. **Commit** changes with clear messages
+4. **Test** thoroughly
+5. **Submit** a pull request
+
+### Development Setup
+```bash
+git clone <your-fork>
+cd arvocap-chatbot
+git remote add upstream <original-repo>
+
+# Setup development environment
+pnpm install
+cd python_training && pip install -r requirements.txt
+
+# Create feature branch
+git checkout -b feature/your-feature-name
+```
 
 ## 📄 License
 
-This project is proprietary software for ArvoCap investment services.
+This project is proprietary software for Arvocap Asset Managers. All rights reserved.
 
-## 📞 Support
+## 🆘 Support
 
-For technical support or questions about the chatbot system, please contact the development team.
+For technical support or questions:
+
+- **Email**: tech-support@arvocap.com
+- **Documentation**: Check inline code comments
+- **Issues**: Create GitHub issue with detailed description
+- **Emergency**: Contact system administrator
+
+## 🔄 Changelog
+
+### v1.0.0 (Current)
+- ✅ Complete web interface with chat functionality
+- ✅ Python API server with FastAPI
+- ✅ Vector database integration with ChromaDB
+- ✅ Admin dashboard for management
+- ✅ Google Sheets integration
+- ✅ CLI interface for testing
+- ✅ Comprehensive training pipeline
+
+### Planned Features
+- [ ] Multi-language support
+- [ ] Voice chat interface
+- [ ] Advanced analytics dashboard
+- [ ] Real-time collaboration features
+- [ ] Mobile app (React Native)
+- [ ] Integration with CRM systems
+
+---
+
+**Built with ❤️ for Arvocap Asset Managers**
+
+*Last Updated: September 2, 2025*

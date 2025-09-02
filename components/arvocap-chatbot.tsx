@@ -37,386 +37,206 @@ const faqs: FAQ[] = [
   },
   {
     id: "2",
-    category: "Company Overview",
+    category: "Company Overview", 
     question: "What is ArvoCap's mission?",
     answer: "To empower investors through innovative financial solutions and portfolio diversification.",
     keywords: ["mission", "purpose", "goal", "empower", "investors"],
   },
   {
     id: "3",
-    category: "Company Overview",
-    question: "What is ArvoCap's vision?",
-    answer: "To leverage technology and market insights to deliver client-centered investment outcomes.",
-    keywords: ["vision", "technology", "market insights", "client-centered"],
+    category: "Money Market Fund",
+    question: "What is the ArvoCap Money Market Fund?",
+    answer: "A low-risk investment fund that invests in short-term, high-quality securities to provide stable returns.",
+    keywords: ["money market", "low risk", "stable", "fund", "returns"],
   },
   {
-    id: "4",
-    category: "Company Overview",
-    question: "What are ArvoCap's values?",
-    answer: "Integrity, innovation, and collaboration.",
-    keywords: ["values", "integrity", "innovation", "collaboration"],
+    id: "4", 
+    category: "Thamani Equity Fund",
+    question: "What is the Thamani Equity Fund?",
+    answer: "An aggressive growth fund that invests in equities for capital appreciation, suitable for high-risk investors.",
+    keywords: ["thamani", "equity", "aggressive", "growth", "high risk"],
   },
   {
     id: "5",
-    category: "Company Overview",
-    question: "Where is ArvoCap's office located?",
-    answer: "Reliable Towers, 8th Floor – Wing B, Mogotio Road, Westlands, Nairobi, Kenya.",
-    keywords: ["office", "location", "address", "nairobi", "westlands", "reliable towers"],
-  },
-  {
-    id: "6",
-    category: "Support & Contact",
-    question: "How can I contact ArvoCap?",
-    answer: "Phone: +254 701 300 200 | Email: invest@arvocap.com | Website: www.arvocap.com",
-    keywords: ["contact", "phone", "email", "website", "reach", "support"],
-  },
-  {
-    id: "7",
-    category: "Company Overview",
-    question: "Who are ArvoCap's custodians and trustees?",
-    answer: "NCBA Bank Kenya PLC.",
-    keywords: ["custodian", "trustee", "ncba", "bank"],
-  },
-  {
-    id: "8",
-    category: "Company Overview",
-    question: "Who audits ArvoCap's funds?",
-    answer: "King'ori Kamau & Company (CPAK).",
-    keywords: ["audit", "auditor", "kingori", "kamau", "cpak"],
-  },
-  {
-    id: "9",
-    category: "Company Overview",
-    question: "Does ArvoCap have an app?",
-    answer:
-      "Yes. The ArvoCap Investment App allows you to manage investments, track performance, and make financial decisions easily.",
-    keywords: ["app", "mobile", "investment app", "track", "performance"],
-  },
-  {
-    id: "10",
-    category: "Company Overview",
-    question: "Is ArvoCap regulated?",
-    answer: "Yes. ArvoCap Asset Managers Ltd is licensed and regulated by the CMA (Kenya).",
-    keywords: ["regulated", "licensed", "cma", "capital markets authority"],
-  },
-  {
-    id: "11",
-    category: "Company Overview",
-    question: "Does past performance guarantee future returns?",
-    answer:
-      "No. Past performance is not necessarily a guide to future performance. Investors may not recover the full amount invested.",
-    keywords: ["past performance", "future returns", "guarantee", "risk", "disclaimer"],
-  },
-
-  // Money Market Fund
-  {
-    id: "12",
-    category: "Money Market Fund",
-    question: "What is the ArvoCap Money Market Fund?",
-    answer:
-      "It is a low-risk collective investment scheme (unit trust) that invests in short-term government securities, treasury bills, corporate bonds, and deposits. It provides higher returns than a bank savings account while ensuring liquidity and capital preservation.",
-    keywords: ["money market fund", "mmf", "low risk", "unit trust", "government securities", "treasury bills"],
-  },
-  {
-    id: "13",
-    category: "Money Market Fund",
-    question: "When was the Money Market Fund launched?",
-    answer: "June 3, 2024.",
-    keywords: ["launched", "launch date", "money market", "june 2024"],
-  },
-  {
-    id: "14",
-    category: "Money Market Fund",
-    question: "What is the minimum investment in the Money Market Fund?",
-    answer: "KES 3,000 minimum; top-ups from KES 1,000.",
-    keywords: ["minimum investment", "money market", "kes 3000", "top up", "minimum"],
-  },
-  {
-    id: "15",
-    category: "Money Market Fund",
-    question: "What is the fund's risk category?",
-    answer: "Category 1 (lowest risk level on the SRRI scale 1–7).",
-    keywords: ["risk category", "category 1", "srri", "lowest risk", "money market"],
-  },
-  {
-    id: "16",
-    category: "Money Market Fund",
-    question: "What are the fees for the Money Market Fund?",
-    answer: "Management fee: 2% per year. No entry or exit fees. No performance fees.",
-    keywords: ["fees", "management fee", "2%", "no entry fee", "no exit fee", "money market"],
-  },
-  {
-    id: "17",
-    category: "Money Market Fund",
-    question: "What were the monthly returns in 2024?",
-    answer: "June 16.2%, July 16.9%, August 17.2%, September 16.8%, October 16.7%, November 16.5%, December 15.32%.",
-    keywords: ["returns", "2024", "monthly returns", "performance", "16%", "money market"],
-  },
-  {
-    id: "18",
-    category: "Money Market Fund",
-    question: "What was the average return of the fund in 2024?",
-    answer: "The average effective annual yield for the first 7 months was 16.5% (net of fees).",
-    keywords: ["average return", "16.5%", "annual yield", "2024", "net of fees"],
-  },
-  {
-    id: "19",
-    category: "Money Market Fund",
-    question: "What is the fund's asset allocation?",
-    answer: "Government Securities 18.39%, Term & Call Deposits 80.16%, Cash 1.45%.",
-    keywords: ["asset allocation", "government securities", "deposits", "cash", "allocation"],
-  },
-  {
-    id: "20",
-    category: "Money Market Fund",
-    question: "What is the current AUM?",
-    answer: "The Unit Trust AUM was KES 550.33 million as of December 2024.",
-    keywords: ["aum", "assets under management", "550 million", "december 2024"],
-  },
-
-  // Thamani Equity Fund
-  {
-    id: "21",
-    category: "Thamani Equity Fund",
-    question: "What is the ArvoCap Thamani Equity Fund?",
-    answer:
-      "It is a CMA-regulated collective investment scheme (unit trust) that invests mainly in equities for capital growth. It is sometimes referred to as 'ArvoCap Thamani' or simply 'Thamani Fund'.",
-    keywords: ["thamani", "equity fund", "equities", "capital growth", "unit trust"],
-  },
-  {
-    id: "22",
-    category: "Thamani Equity Fund",
-    question: "What is the investment objective of the Thamani Fund?",
-    answer:
-      "To achieve above-market risk-adjusted returns through investing in high-value, liquid stocks tracked by the NSE 25 Index, with a mid-to-long-term capital growth view.",
-    keywords: ["investment objective", "above-market returns", "nse 25", "capital growth", "thamani"],
-  },
-  {
-    id: "23",
-    category: "Thamani Equity Fund",
-    question: "What is the fund's investment strategy?",
-    answer: "Active equity allocation with tactical positioning, hedging using single stock and equity index futures.",
-    keywords: ["investment strategy", "active equity", "tactical positioning", "hedging", "futures"],
-  },
-  {
-    id: "24",
-    category: "Thamani Equity Fund",
-    question: "What is the benchmark for the Thamani Fund?",
-    answer: "NSE 25 Index.",
-    keywords: ["benchmark", "nse 25", "index", "thamani"],
-  },
-  {
-    id: "25",
-    category: "Thamani Equity Fund",
-    question: "What does the Thamani Fund invest in?",
-    answer:
-      "Listed NSE equities (60–100%, target 80%), Cash & equivalents (0–100%, target 10%), Derivatives (0–20%, target 10%).",
-    keywords: ["investment allocation", "nse equities", "cash", "derivatives", "80%", "thamani"],
-  },
-  {
-    id: "26",
-    category: "Thamani Equity Fund",
-    question: "What is the minimum investment in the Thamani Fund?",
-    answer: "KES 100,000 initial and KES 100,000 top-up.",
-    keywords: ["minimum investment", "kes 100000", "initial", "top up", "thamani"],
-  },
-  {
-    id: "27",
-    category: "Thamani Equity Fund",
-    question: "Is there a lock-in period for the Thamani Fund?",
-    answer: "Yes, 6 months for all new investments.",
-    keywords: ["lock-in period", "6 months", "lock in", "thamani"],
-  },
-  {
-    id: "28",
-    category: "Thamani Equity Fund",
-    question: "What is the risk profile of the Thamani Fund?",
-    answer: "Aggressive – suitable for investors seeking high returns with significant market risk.",
-    keywords: ["risk profile", "aggressive", "high returns", "market risk", "thamani"],
-  },
-  {
-    id: "29",
-    category: "Thamani Equity Fund",
-    question: "What fees apply to the Thamani Fund?",
-    answer:
-      "Initial fee: 0.5% upfront. Annual management fee: 2.0% of average AUM (daily prorated, payable quarterly). Performance fee: 20% of annual net returns (only if positive).",
-    keywords: ["fees", "0.5%", "2%", "20%", "management fee", "performance fee", "thamani"],
-  },
-
-  // General Investor Info
-  {
-    id: "30",
-    category: "General Investor Info",
-    question: "How does ArvoCap tailor strategies to individual needs?",
-    answer:
-      "Through investor profiling and personalized portfolio construction based on goals, risk preferences, and financial history.",
-    keywords: ["tailor", "personalized", "investor profiling", "portfolio construction", "individual needs"],
-  },
-  {
-    id: "31",
-    category: "General Investor Info",
-    question: "How does ArvoCap address market volatility and risk?",
-    answer: "Through diversification, derivatives hedging (e.g., in Thamani Fund), and stress simulations.",
-    keywords: ["market volatility", "risk management", "diversification", "hedging", "stress simulations"],
-  },
-  {
-    id: "32",
-    category: "General Investor Info",
-    question: "How can I monitor my investments?",
-    answer: "Via monthly fact sheets, performance reports, and real-time dashboards on digital portals.",
-    keywords: ["monitor", "fact sheets", "performance reports", "dashboards", "digital portals"],
-  },
-  {
-    id: "33",
-    category: "General Investor Info",
-    question: "Can I schedule a consultation with ArvoCap?",
-    answer: "Yes. Consultations can be booked through the website or contact channels.",
-    keywords: ["consultation", "schedule", "book", "meeting", "appointment"],
-  },
-  {
-    id: "34",
-    category: "General Investor Info",
-    question: "What sets ArvoCap apart from competitors?",
-    answer: "Bespoke strategies, advanced analytics, diversified sub-funds, and regulatory compliance.",
-    keywords: ["competitive advantage", "bespoke", "advanced analytics", "diversified", "compliance"],
-  },
-
-  // Funds Overview
-  {
-    id: "35",
-    category: "Funds Overview",
-    question: "How many funds does ArvoCap have?",
-    answer: "ArvoCap manages 10 funds under its Unit Trust Scheme, approved by the Capital Markets Authority (CMA).",
-    keywords: ["funds", "10 funds", "unit trust", "cma approved", "how many"],
-  },
-  {
-    id: "36",
-    category: "Fixed Income Funds",
-    question: "What is the ArvoCap Ngao Fixed Income Distribution Fund?",
-    answer: "It invests in government and corporate bonds and pays investors regular income distributions.",
-    keywords: ["ngao", "fixed income", "distribution", "bonds", "regular income"],
-  },
-  {
-    id: "37",
-    category: "Fixed Income Funds",
-    question: "What is the ArvoCap Almasi Fixed Income Accumulation Fund?",
-    answer: "It invests in bonds, but instead of paying out income, it reinvests earnings to compound over time.",
-    keywords: ["almasi", "fixed income", "accumulation", "bonds", "compound", "reinvest"],
-  },
-  {
-    id: "38",
-    category: "Special Funds",
-    question: "What is the ArvoCap Eurofix Fixed Income Special Fund?",
-    answer:
-      "A USD-denominated fund investing in fixed income assets. It provides currency diversification and hedges against KES volatility.",
-    keywords: ["eurofix", "usd", "fixed income", "currency diversification", "kes volatility"],
-  },
-  {
-    id: "39",
-    category: "Equity Funds",
-    question: "What is the ArvoCap Africa Equity Special Fund?",
-    answer: "It invests in Pan-African equities, providing exposure to growth opportunities across the continent.",
-    keywords: ["africa equity", "pan-african", "equities", "continent", "growth opportunities"],
-  },
-  {
-    id: "40",
-    category: "Equity Funds",
-    question: "What is the ArvoCap Global Equity Special Fund?",
-    answer: "It invests in global equities, offering investors access to developed and emerging international markets.",
-    keywords: ["global equity", "international markets", "developed", "emerging", "global"],
-  },
-  {
-    id: "41",
-    category: "Special Funds",
-    question: "What is the ArvoCap Multi-Asset Strategy Special Fund?",
-    answer: "A USD fund that mixes equities, bonds, and alternatives to balance risk and returns.",
-    keywords: ["multi-asset", "usd fund", "equities", "bonds", "alternatives", "balance risk"],
-  },
-  {
-    id: "42",
-    category: "Sharia Funds",
-    question: "What is the ArvoCap Global Sharia Equity Special Fund?",
-    answer: "A USD-denominated fund that invests in Shariah-compliant global equities, aligned with Islamic finance.",
-    keywords: ["global sharia", "usd", "shariah-compliant", "islamic finance", "global equities"],
-  },
-  {
-    id: "43",
-    category: "Sharia Funds",
-    question: "What is the ArvoCap Mabruk Sharia Special Fund?",
-    answer: "A Kenya Shariah-compliant fund offering ethical investments in the local market.",
-    keywords: ["mabruk", "sharia", "kenya", "ethical investments", "local market"],
-  },
+    category: "General",
+    question: "How can I get started with ArvoCap?",
+    answer: "Contact our team at invest@arvocap.com or call +254 701 300 200 to discuss your investment goals.",
+    keywords: ["get started", "contact", "invest", "begin"],
+  }
 ]
 
 const quickReplies = [
   "What is ArvoCap Asset Managers?",
-  "Tell me about Money Market Fund",
+  "Tell me about Money Market Fund", 
   "What is Thamani Equity Fund?",
   "What are the fees?",
   "How do I get started?",
   "Contact information",
 ]
+  
+type ChatResult = { message: string; usedKnowledge: boolean }
 
-const callChatGPT = async (userQuery: string, faqContext?: string): Promise<string> => {
+// Simple response cache for faster repeated queries
+const responseCache = new Map<string, { result: ChatResult; timestamp: number }>()
+const CACHE_DURATION = 5 * 60 * 1000 // 5 minutes
+
+const callChatGPT = async (userQuery: string, faqContext?: string): Promise<ChatResult> => {
   try {
-    const systemPrompt = `You are ArvoCap Asset Managers' official AI assistant. You respond in a professional, premium, and reassuring tone that reflects our brand as a leading licensed asset management firm in Kenya. You prioritize clarity, accuracy, and trustworthiness in all responses. 
+    // Check cache first for faster responses
+    const cacheKey = userQuery.toLowerCase().trim()
+    const cached = responseCache.get(cacheKey)
+    if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
+      console.log("🚀 Using cached response for faster delivery")
+      return cached.result
+    }
 
-Key guidelines:
-- Always maintain a professional, client-focused approach suitable for investment services
-- Keep responses concise but informative (2-4 sentences)
-- Use bullet points for step-by-step instructions when appropriate
-- If you're unsure about specific financial details, politely state that you'll connect the user with a human representative
-- Never hallucinate financial advice, specific returns, or investment recommendations beyond what's in our FAQ
-- Always redirect complex investment inquiries or specific financial advice to human representatives
-- Remember we offer Money Market Fund (low-risk, 16.5% average returns) and Thamani Equity Fund (aggressive growth)
-- We are regulated by CMA Kenya, license number 190
+    // Always try Python chatbot first (same as CLI) - bypass FAQ context
+    const pythonApiUrl = process.env.NEXT_PUBLIC_PYTHON_API_URL || "http://localhost:8000"
+    
+    try {
+      console.log("🔗 Attempting to connect to Python API:", pythonApiUrl)
+      const pythonResponse = await fetch(`${pythonApiUrl}/chat`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          message: userQuery,
+          conversation_id: `web_${Date.now()}`
+        }),
+        // Reduce timeout for faster response
+        signal: AbortSignal.timeout(5000)
+      })
 
-${faqContext ? `Context from our FAQ: ${faqContext}` : ""}`
+      console.log("📡 Python API response status:", pythonResponse.status)
+      
+      if (pythonResponse.ok) {
+        const pythonData = await pythonResponse.json()
+        console.log("✅ Using trained Python chatbot response:", pythonData)
+        const result = {
+          message: pythonData.response || pythonData.message || "I'm here to help with your investment questions!",
+          usedKnowledge: true
+        }
+        
+        // Cache successful responses
+        responseCache.set(cacheKey, { result, timestamp: Date.now() })
+        return result
+      } else {
+        const errorText = await pythonResponse.text()
+        console.warn(`Python chatbot API responded with status ${pythonResponse.status}:`, errorText)
+      }
+    } catch (pythonError) {
+      console.warn("Python trained chatbot not available, falling back to OpenAI:", pythonError)
+    }
 
-    const response = await fetch("/api/chat", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: userQuery },
-        ],
-        temperature: 0.2,
-      }),
+    // Fallback to OpenAI without FAQ context - let it use vector search results only
+    let enhancedContext = ""
+    let hasVectorResults = false
+    
+    // Only search vector database if Python API failed
+    try {
+      const knowledgeResponse = await fetch("/api/chatbot-knowledge", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          query: userQuery,
+          maxResults: 2  // Reduce to 2 for faster response
+        }),
+        // Reduce timeout
+        signal: AbortSignal.timeout(3000)
+      })
+
+      if (knowledgeResponse.ok) {
+        const knowledgeData = await knowledgeResponse.json()
+        if (knowledgeData.hasResults && knowledgeData.results.length > 0) {
+          hasVectorResults = true
+          const vectorContext = knowledgeData.results
+            .map((result: any, index: number) => `${index + 1}. ${result.content}`)
+            .join("\n")
+          
+          enhancedContext = `Knowledge Base Information:\n${vectorContext}`
+        }
+      }
+    } catch (vectorError) {
+      console.warn("Vector search unavailable:", vectorError)
+    }
+
+    // Create system prompt for OpenAI based on available context
+    let systemPrompt = `You are Arvocap's investment assistant. Always respond professionally and helpfully about investment topics, portfolio management, and financial advice.`
+    
+    if (hasVectorResults) {
+      systemPrompt = `You are Arvocap's investment assistant with access to specific knowledge about the company's investment strategies and fund performance. Use the provided knowledge base information to give detailed, accurate responses about Arvocap's offerings.`
+    }
+
+    console.log("📤 Sending to OpenAI (fallback):", {
+      query: userQuery,
+      hasVectorResults,
+      contextLength: enhancedContext.length
     })
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}))
-      console.error("API request failed:", response.status, errorData)
+    systemPrompt += enhancedContext ? `\n\nContext Information: ${enhancedContext}` : ""
 
-      if (faqContext) {
-        return faqContext
+    // OpenAI fallback API call
+    try {
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: userQuery },
+          ],
+          temperature: 0.2,
+        }),
+        // Add timeout for OpenAI fallback
+        signal: AbortSignal.timeout(10000)
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        console.error("API request failed:", response.status, errorData)
+
+        if (faqContext) {
+          return { message: faqContext, usedKnowledge: hasVectorResults }
+        }
+
+        throw new Error(`API request failed with status ${response.status}`)
       }
 
-      throw new Error(`API request failed with status ${response.status}`)
-    }
+      const data = await response.json()
 
-    const data = await response.json()
-
-    if (!data.message) {
-      console.error("Invalid API response:", data)
-      if (faqContext) {
-        return faqContext
+      if (!data.message) {
+        console.error("Invalid API response:", data)
+        if (faqContext) {
+          return { message: faqContext, usedKnowledge: hasVectorResults }
+        }
+        throw new Error("Invalid API response")
       }
-      throw new Error("Invalid API response")
+
+      return { message: data.message, usedKnowledge: hasVectorResults }
+    } catch (openaiError) {
+      console.error("OpenAI API error:", openaiError)
+      
+      if (faqContext) {
+        return { message: faqContext, usedKnowledge: false }
+      }
+
+      return {
+        message: "I'm temporarily having trouble processing your request. Please try again in a moment.",
+        usedKnowledge: false,
+      }
     }
 
-    return data.message
   } catch (error) {
-    console.error("ChatGPT API error:", error)
-
-    if (faqContext) {
-      return faqContext
+    console.error("Main chat function error:", error)
+    return {
+      message: "I'm temporarily having trouble processing your request. Please try again in a moment.",
+      usedKnowledge: false,
     }
-
-    return "I apologize, but I'm having trouble accessing my enhanced responses right now. However, I can still help you with questions about our investment funds, fees, and services. Could you please rephrase your question or try asking about our Money Market Fund or Thamani Equity Fund?"
   }
 }
 
@@ -434,6 +254,21 @@ export function ArvocapChatbot() {
   })
   const scrollAreaRef = useRef<HTMLDivElement>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  // Preload Python API connection on component mount for faster first response
+  useEffect(() => {
+    const preloadAPI = async () => {
+      try {
+        const pythonApiUrl = process.env.NEXT_PUBLIC_PYTHON_API_URL || "http://localhost:8000"
+        await fetch(`${pythonApiUrl}/test`, { method: "GET", signal: AbortSignal.timeout(2000) })
+        console.log("🚀 Python API preloaded for faster responses")
+      } catch (error) {
+        console.log("⚠️ Python API preload failed (will fallback when needed)")
+      }
+    }
+    preloadAPI()
+  }, [])
 
   // Generate unique ID for messages
   const generateUniqueId = () => {
@@ -499,8 +334,24 @@ export function ArvocapChatbot() {
       return bestMatch
     }
 
-    console.log("No match found - will show contact form")
+    console.log("No match found - will use OpenAI for general response")
     return null
+  }
+
+  const isGeneralQuery = (query: string): boolean => {
+    const queryLower = query.toLowerCase().trim()
+    
+    // Check for greetings and general queries that should go to OpenAI
+    const generalPatterns = [
+      /^(hi|hello|hey|good morning|good afternoon|good evening)/,
+      /^(how are you|what.*you|who.*you|can you help)/,
+      /^(thank you|thanks|bye|goodbye)/,
+      /^(what.*arvocap|tell me about|explain|describe)/,
+      /^(i need|i want|i would like|i'm interested)/,
+      /^(help|support|assistance)/
+    ]
+    
+    return generalPatterns.some(pattern => pattern.test(queryLower)) || queryLower.length <= 20
   }
 
   const handleSendMessage = async (content: string, isQuickReply = false) => {
@@ -524,14 +375,31 @@ export function ArvocapChatbot() {
 
     await new Promise((resolve) => setTimeout(resolve, 1000))
 
-    const matchedFAQ = findBestMatch(content)
-    let botResponse: string
+    // Skip FAQ matching completely - always use Python chatbot (same as CLI)
+    let botResponse: string | null = null
+    let shouldShowContactForm = false
 
-    if (matchedFAQ) {
-      botResponse = await callChatGPT(content, matchedFAQ.answer)
-    } else {
-      // No FAQ match found - show contact form
-      botResponse = "I don't have specific information about that question in my knowledge base. Let me help you connect with our investment specialists who can provide you with detailed assistance. Please fill out the form below:"
+    // Always use Python chatbot directly (no FAQ interference)
+    try {
+      const result = await callChatGPT(content) // Remove FAQ context to get pure Python/OpenAI response
+      botResponse = result.message
+      
+      // Only show contact form if the response explicitly suggests it
+      if (!result.usedKnowledge && (!botResponse || botResponse.includes("connect you with") || botResponse.includes("talk to human"))) {
+        shouldShowContactForm = false
+        // Auto-focus input so user can continue typing
+        setTimeout(() => inputRef.current?.focus(), 0)
+      }
+    } catch (e) {
+      console.warn("Automated response pipeline failed:", e)
+      botResponse = "I'm having trouble connecting to our AI service. Please try again or use the Talk to Human button."
+    }
+
+    // Final fallback if no response
+    if (!botResponse || botResponse.trim().length === 0) {
+      botResponse = "I couldn't process your request right now. Please try rephrasing or use the Talk to Human button below."
+      shouldShowContactForm = false
+      setTimeout(() => inputRef.current?.focus(), 0)
     }
 
     const botMessage: Message = {
@@ -544,9 +412,9 @@ export function ArvocapChatbot() {
     setMessages((prev) => [...prev, botMessage])
     setIsTyping(false)
 
-    // Show contact form after bot message if no FAQ match
-    if (!matchedFAQ) {
-      console.log("No FAQ match - showing contact form in 500ms")
+    // Show contact form only for complex queries that need human assistance
+    if (shouldShowContactForm) {
+      console.log("Complex query - showing contact form in 500ms")
       setTimeout(() => {
         console.log("Setting showContactForm to true")
         setShowContactForm(true)
@@ -666,7 +534,7 @@ export function ArvocapChatbot() {
   }
 
   return (
-    <Card className="fixed bottom-4 right-4 md:bottom-6 md:right-6 w-[calc(100vw-2rem)] max-w-sm md:w-96 h-[calc(100vh-1rem)] max-h-[90vh] md:h-[700px] shadow-2xl border-0 bg-card animate-in slide-in-from-bottom-4 duration-300 z-50 flex flex-col">
+    <Card className="fixed bottom-3 right-3 md:bottom-6 md:right-6 w-[calc(100vw-1.5rem)] max-w-md md:w-[420px] h-[calc(100vh-2rem)] max-h-[95vh] md:h-[85vh] shadow-2xl border-0 bg-card animate-in slide-in-from-bottom-4 transition-all duration-300 z-50 flex flex-col">
       <CardHeader className="bg-primary text-primary-foreground p-3 md:p-4 rounded-t-lg flex-shrink-0">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 md:gap-3">
@@ -732,18 +600,9 @@ export function ArvocapChatbot() {
                 </div>
                 <div className="bg-muted text-muted-foreground p-2 md:p-3 rounded-lg">
                   <div className="flex gap-1">
-                    <div
-                      className="w-2 h-2 bg-muted-foreground/60 rounded-full animate-bounce"
-                      style={{ animationDelay: "0ms" }}
-                    />
-                    <div
-                      className="w-2 h-2 bg-muted-foreground/60 rounded-full animate-bounce"
-                      style={{ animationDelay: "150ms" }}
-                    />
-                    <div
-                      className="w-2 h-2 bg-muted-foreground/60 rounded-full animate-bounce"
-                      style={{ animationDelay: "300ms" }}
-                    />
+                    <div className="w-2 h-2 bg-muted-foreground/60 rounded-full animate-bounce typing-dot delay-0" />
+                    <div className="w-2 h-2 bg-muted-foreground/60 rounded-full animate-bounce typing-dot delay-150" />
+                    <div className="w-2 h-2 bg-muted-foreground/60 rounded-full animate-bounce typing-dot delay-300" />
                   </div>
                 </div>
               </div>
@@ -833,6 +692,7 @@ export function ArvocapChatbot() {
 
           <div className="flex gap-2">
             <Input
+              ref={inputRef}
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               placeholder="Type your question..."
