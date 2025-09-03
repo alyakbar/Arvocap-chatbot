@@ -91,7 +91,7 @@ const callChatGPT = async (userQuery: string, faqContext?: string): Promise<Chat
     }
 
     // Always try Python chatbot first (same as CLI) - bypass FAQ context
-    const pythonApiUrl = process.env.NEXT_PUBLIC_PYTHON_API_URL || "http://localhost:8000"
+    const pythonApiUrl = process.env.NEXT_PUBLIC_PYTHON_API_URL || "https://mathematical-hist-brazilian-invitations.trycloudflare.com"
     
     try {
       console.log("🔗 Attempting to connect to Python API:", pythonApiUrl)
@@ -104,8 +104,8 @@ const callChatGPT = async (userQuery: string, faqContext?: string): Promise<Chat
           message: userQuery,
           conversation_id: `web_${Date.now()}`
         }),
-        // Reduce timeout for faster response
-        signal: AbortSignal.timeout(5000)
+        // Increase timeout for tunnel connections
+        signal: AbortSignal.timeout(20000)
       })
 
       console.log("📡 Python API response status:", pythonResponse.status)
@@ -144,8 +144,8 @@ const callChatGPT = async (userQuery: string, faqContext?: string): Promise<Chat
           query: userQuery,
           maxResults: 2  // Reduce to 2 for faster response
         }),
-        // Reduce timeout
-        signal: AbortSignal.timeout(3000)
+        // Increase timeout for tunnel connections
+        signal: AbortSignal.timeout(15000)
       })
 
       if (knowledgeResponse.ok) {
@@ -260,8 +260,8 @@ export function ArvocapChatbot() {
   useEffect(() => {
     const preloadAPI = async () => {
       try {
-        const pythonApiUrl = process.env.NEXT_PUBLIC_PYTHON_API_URL || "http://localhost:8000"
-        await fetch(`${pythonApiUrl}/test`, { method: "GET", signal: AbortSignal.timeout(2000) })
+        const pythonApiUrl = process.env.NEXT_PUBLIC_PYTHON_API_URL || "https://basics-julia-mod-billion.trycloudflare.com"
+        await fetch(`${pythonApiUrl}/test`, { method: "GET", signal: AbortSignal.timeout(10000) })
         console.log("🚀 Python API preloaded for faster responses")
       } catch (error) {
         console.log("⚠️ Python API preload failed (will fallback when needed)")
@@ -520,7 +520,14 @@ export function ArvocapChatbot() {
     return (
       <Button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-4 right-4 md:bottom-6 md:right-6 h-12 w-12 md:h-14 md:w-14 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 bg-primary hover:bg-primary/90 z-50"
+        className="fixed bottom-4 right-4 md:bottom-6 md:right-6 h-12 w-12 md:h-14 md:w-14 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 z-50"
+        style={{ backgroundColor: '#B78A2E', color: 'white' }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.backgroundColor = '#A67825'
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.backgroundColor = '#B78A2E'
+        }}
         size="icon"
       >
         <MessageCircle className="h-5 w-5 md:h-6 md:w-6" />

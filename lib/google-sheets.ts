@@ -44,9 +44,10 @@ export const addToGoogleSheet = async (data: {
 }) => {
   try {
     const sheets = createGoogleSheetsService()
+    const rc = getGoogleCredentials()
 
-  const spreadsheetId = rc.GOOGLE_SPREADSHEET_ID || SPREADSHEET_ID
-  if (!spreadsheetId) {
+    const spreadsheetId = rc.GOOGLE_SPREADSHEET_ID || SPREADSHEET_ID
+    if (!spreadsheetId) {
       throw new Error('Google Spreadsheet ID not configured')
     }
 

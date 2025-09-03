@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import AdminTraining from '@/components/admin-training'
 
 interface ContactSubmission {
   name: string
@@ -35,6 +36,7 @@ export default function AdminPage() {
     GOOGLE_CLIENT_ID: ''
   })
   const [savingGoogle, setSavingGoogle] = useState(false)
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'training'>('dashboard')
 
   const checkTrainingSystemStatus = async () => {
     try {
@@ -157,7 +159,7 @@ export default function AdminPage() {
   }, [])
 
   return (
-    <div className="container mx-auto p-6 max-w-4xl">
+    <div className="container mx-auto p-6 max-w-6xl">
       <Card>
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-center">
@@ -168,37 +170,65 @@ export default function AdminPage() {
             <Badge variant="outline">AI Training System</Badge>
             <Badge variant="outline">Excel Backup</Badge>
           </div>
+          
+          {/* Tab Navigation */}
+          <div className="flex justify-center mt-6">
+            <div className="flex bg-muted rounded-lg p-1">
+              <Button
+                variant={activeTab === 'dashboard' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => setActiveTab('dashboard')}
+                className="rounded-md"
+              >
+                Dashboard
+              </Button>
+              <Button
+                variant={activeTab === 'training' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => setActiveTab('training')}
+                className="rounded-md"
+              >
+                AI Training
+              </Button>
+            </div>
+          </div>
         </CardHeader>
         <CardContent className="space-y-6">
-          {/* Training System Status */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">🤖 AI Training System</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
-                  <div className={`w-3 h-3 rounded-full ${trainingStatus.healthy ? 'bg-green-500' : 'bg-red-500'}`}></div>
-                  <span className="font-medium">
-                    {trainingStatus.healthy ? 'Connected' : 'Disconnected'}
-                  </span>
-                </div>
-                <Button
-                  onClick={checkTrainingSystemStatus}
-                  variant="outline"
-                  size="sm"
-                >
-                  Refresh Status
-                </Button>
-              </div>
-              {typeof trainingStatus.knowledgeBaseSize === 'number' && (
-                <p className="text-sm text-muted-foreground mb-2">Knowledge Base Items: {trainingStatus.knowledgeBaseSize}</p>
-              )}
-              {trainingStatus.error && (
-                <p className="text-sm text-red-600 mb-4">
-                  Error: {trainingStatus.error}
-                </p>
-              )}
+          {activeTab === 'training' && (
+            <AdminTraining />
+          )}
+          
+          {activeTab === 'dashboard' && (
+            <>
+              {/* Training System Status */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">🤖 AI Training System</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-2">
+                      <div className={`w-3 h-3 rounded-full ${trainingStatus.healthy ? 'bg-green-500' : 'bg-red-500'}`}></div>
+                      <span className="font-medium">
+                        {trainingStatus.healthy ? 'Connected' : 'Disconnected'}
+                      </span>
+                    </div>
+                    <Button
+                      onClick={checkTrainingSystemStatus}
+                      variant="outline"
+                      size="sm"
+                    >
+                      Refresh Status
+                    </Button>
+                  </div>
+                  {typeof trainingStatus.knowledgeBaseSize === 'number' && (
+                    <p className="text-sm text-muted-foreground mb-2">Knowledge Base Items: {trainingStatus.knowledgeBaseSize}</p>
+                  )}
+                  {trainingStatus.error && (
+                    <p className="text-sm text-red-600 mb-4">
+                      Error: {trainingStatus.error}
+                    </p>
+                  )}
               
               <div className="grid grid-cols-2 gap-4 mb-4">
                 <Button
@@ -209,7 +239,7 @@ export default function AdminPage() {
                   {retraining ? 'Retraining...' : 'Retrain Knowledge Base'}
                 </Button>
                 <Button
-                  onClick={() => window.open('http://localhost:8000/docs', '_blank')}
+                  onClick={() => window.open('https://mathematical-hist-brazilian-invitations.trycloudflare.com/docs', '_blank')}
                   variant="outline"
                   className="w-full"
                 >
@@ -282,7 +312,7 @@ export default function AdminPage() {
             <div className="text-sm text-muted-foreground space-y-2">
               <p><strong>To connect Google Sheets:</strong></p>
               <ol className="list-decimal list-inside space-y-1 ml-4">
-                <li>Go to <a href="https://console.cloud.google.com/" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">Google Cloud Console</a></li>
+                <li>Go to <a href="https://console.cloud.google.com/" target="_blank" rel="noopener noreferrer" className="text-primary underline">Google Cloud Console</a></li>
                 <li>Create a new project or select existing one</li>
                 <li>Enable the Google Sheets API</li>
                 <li>Create a Service Account and download the JSON key file</li>
@@ -314,6 +344,8 @@ export default function AdminPage() {
               <li>5. <strong>Reliability:</strong> If Google Sheets fails, Excel backup ensures no data loss</li>
             </ol>
           </div>
+              </>
+            )}
         </CardContent>
       </Card>
     </div>

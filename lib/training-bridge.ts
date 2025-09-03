@@ -26,7 +26,7 @@ export class TrainingBridge {
   
   constructor(config?: Partial<TrainingSystemConfig>) {
     this.config = {
-      apiUrl: process.env.PYTHON_API_URL || "http://localhost:8000",
+      apiUrl: process.env.PYTHON_API_URL || "https://mathematical-hist-brazilian-invitations.trycloudflare.com",
       timeout: 5000,
       retryAttempts: 2,
       fallbackToOpenAI: true,
@@ -199,6 +199,240 @@ export class TrainingBridge {
     } catch (error) {
       console.error("Setting OpenAI API key failed:", error)
       return { success: false }
+    }
+  }
+
+  /**
+   * Upload documents for processing
+   */
+  async uploadDocuments(params: {
+    documents: File[]
+    ocrEnabled: boolean
+    chunkSize: number
+    chunkOverlap: number
+  }): Promise<{ success: boolean; chunksCreated?: number; error?: string }> {
+    try {
+      const formData = new FormData()
+      
+      params.documents.forEach((file, index) => {
+        formData.append(`file_${index}`, file)
+      })
+      
+      formData.append('ocr_enabled', params.ocrEnabled.toString())
+      formData.append('chunk_size', params.chunkSize.toString())
+      formData.append('chunk_overlap', params.chunkOverlap.toString())
+
+      const response = await fetch(`${this.config.apiUrl}/admin/upload_documents`, {
+        method: "POST",
+        body: formData
+      })
+
+      if (!response.ok) {
+        throw new Error(`Upload failed: ${response.status}`)
+      }
+
+      const data = await response.json()
+      return { 
+        success: data.success, 
+        chunksCreated: data.chunks_created || data.chunksCreated 
+      }
+    } catch (error) {
+      console.error("Document upload failed:", error)
+      return { 
+        success: false, 
+        error: error instanceof Error ? error.message : "Unknown error" 
+      }
+    }
+  }
+
+  /**
+   * Scrape website content
+   */
+  async scrapeWebsite(params: {
+    url: string
+    depth: number
+    chunkSize: number
+    chunkOverlap: number
+  }): Promise<{ success: boolean; pagesProcessed?: number; chunksCreated?: number; error?: string }> {
+    try {
+      const response = await fetch(`${this.config.apiUrl}/admin/scrape_website`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          url: params.url,
+          depth: params.depth,
+          chunk_size: params.chunkSize,
+          chunk_overlap: params.chunkOverlap
+        })
+      })
+
+      if (!response.ok) {
+        throw new Error(`Scraping failed: ${response.status}`)
+      }
+
+      const data = await response.json()
+      return { 
+        success: data.success,
+        pagesProcessed: data.pages_processed || data.pagesProcessed,
+        chunksCreated: data.chunks_created || data.chunksCreated
+      }
+    } catch (error) {
+      console.error("Website scraping failed:", error)
+      return { 
+        success: false, 
+        error: error instanceof Error ? error.message : "Unknown error" 
+      }
+    }
+  }
+
+  /**
+   * Add manual entry to knowledge base
+   */
+  async addManualEntry(params: {
+    title: string
+    content: string
+    chunkSize: number
+    chunkOverlap: number
+  }): Promise<{ success: boolean; chunksCreated?: number; error?: string }> {
+    try {
+      const response = await fetch(`${this.config.apiUrl}/admin/add_manual_entry`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title: params.title,
+          content: params.content,
+          chunk_size: params.chunkSize,
+          chunk_overlap: params.chunkOverlap
+        })
+      })
+
+      if (!response.ok) {
+        throw new Error(`Manual entry failed: ${response.status}`)
+      }
+
+      const data = await response.json()
+      return { 
+        success: data.success,
+        chunksCreated: data.chunks_created || data.chunksCreated
+      }
+    } catch (error) {
+      console.error("Manual entry failed:", error)
+      return { 
+        success: false, 
+        error: error instanceof Error ? error.message : "Unknown error" 
+      }
+    }
+  }
+
+  /**
+   * Get knowledge base items
+   */
+  async getKnowledgeBase(): Promise<{ 
+    success: boolean
+    items?: Array<{
+      id: string
+      type: string
+      title: string
+      content: string
+      timestamp: Date
+      size: number
+      status: string
+    }>
+    totalItems?: number
+    error?: string 
+  }> {
+    try {
+      const response = await fetch(`${this.config.apiUrl}/admin/knowledge_base`)
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch knowledge base: ${response.status}`)
+      }
+
+      const data = await response.json()
+      return { 
+        success: true,
+        items: data.items?.map((item: any) => ({
+          id: item.id,
+          type: item.type || 'document',
+          title: item.title || 'Untitled',
+          content: item.content || '',
+          timestamp: new Date(item.timestamp || Date.now()),
+          size: item.size || 0,
+          status: item.status || 'active'
+        })) || [],
+        totalItems: data.total_items || data.totalItems || 0
+      }
+    } catch (error) {
+      console.error("Knowledge base fetch failed:", error)
+      return { 
+        success: false, 
+        error: error instanceof Error ? error.message : "Unknown error" 
+      }
+    }
+  }
+
+  /**
+   * Delete knowledge base item
+   */
+  async deleteKnowledgeItem(id: string): Promise<{ success: boolean; error?: string }> {
+    try {
+      const response = await fetch(`${this.config.apiUrl}/admin/knowledge_base/${id}`, {
+        method: "DELETE"
+      })
+
+      if (!response.ok) {
+        throw new Error(`Delete failed: ${response.status}`)
+      }
+
+      const data = await response.json()
+      return { success: data.success }
+    } catch (error) {
+      console.error("Knowledge base item deletion failed:", error)
+      return { 
+        success: false, 
+        error: error instanceof Error ? error.message : "Unknown error" 
+      }
+    }
+  }
+
+  /**
+   * Get training statistics
+   */
+  async getTrainingStats(): Promise<{ 
+    success: boolean
+    totalDocuments?: number
+    totalWebsites?: number
+    manualEntries?: number
+    knowledgeBaseSize?: number
+    lastTrained?: Date
+    error?: string 
+  }> {
+    try {
+      const response = await fetch(`${this.config.apiUrl}/admin/training_stats`)
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch training stats: ${response.status}`)
+      }
+
+      const data = await response.json()
+      return { 
+        success: true,
+        totalDocuments: data.total_documents || data.totalDocuments || 0,
+        totalWebsites: data.total_websites || data.totalWebsites || 0,
+        manualEntries: data.manual_entries || data.manualEntries || 0,
+        knowledgeBaseSize: data.knowledge_base_size || data.knowledgeBaseSize || 0,
+        lastTrained: data.last_trained ? new Date(data.last_trained) : undefined
+      }
+    } catch (error) {
+      console.error("Training stats fetch failed:", error)
+      return { 
+        success: false, 
+        error: error instanceof Error ? error.message : "Unknown error" 
+      }
     }
   }
 }

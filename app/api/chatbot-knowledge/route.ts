@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if Python training system is available
-    const pythonApiUrl = process.env.PYTHON_API_URL || "http://localhost:8000"
+    const pythonApiUrl = process.env.PYTHON_API_URL || "https://mathematical-hist-brazilian-invitations.trycloudflare.com"
     
     try {
       const response = await fetch(`${pythonApiUrl}/search`, {
@@ -89,7 +89,7 @@ export async function POST(request: NextRequest) {
 // Health check endpoint
 export async function GET() {
   try {
-    const pythonApiUrl = process.env.PYTHON_API_URL || "http://localhost:8000"
+    const pythonApiUrl = process.env.PYTHON_API_URL || "https://mathematical-hist-brazilian-invitations.trycloudflare.com"
     
     const response = await fetch(`${pythonApiUrl}/health`, {
       signal: AbortSignal.timeout(3000)

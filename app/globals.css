@@ -8,40 +8,40 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Updated color tokens to match Arvocap blue theme design brief */
+  /* Updated color tokens to match Arvocap custom theme design */
   --background: oklch(1 0 0); /* White background */
   --foreground: oklch(0.145 0 0); /* Charcoal text */
   --card: oklch(0.97 0 0); /* Light gray card background */
   --card-foreground: oklch(0.145 0 0); /* Charcoal text on cards */
   --popover: oklch(1 0 0); /* White popover background */
   --popover-foreground: oklch(0.145 0 0); /* Charcoal text on popovers */
-  --primary: oklch(0.25 0.15 264); /* Dark blue primary */
+  --primary: #20405A; /* Primary dark blue */
   --primary-foreground: oklch(1 0 0); /* White text on primary */
-  --secondary: oklch(0.55 0.2 264); /* Bright blue secondary */
+  --secondary: #B78A2E; /* Primary gold secondary */
   --secondary-foreground: oklch(1 0 0); /* White text on secondary */
   --muted: oklch(0.97 0 0); /* Light gray muted */
   --muted-foreground: oklch(0.145 0 0); /* Charcoal text on muted */
-  --accent: oklch(0.55 0.2 264); /* Bright blue accent */
+  --accent: #B78A2E; /* Primary gold accent */
   --accent-foreground: oklch(1 0 0); /* White text on accent */
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(1 0 0);
   --border: oklch(0.85 0 0); /* Light border */
   --input: oklch(1 0 0); /* White input background */
-  --ring: oklch(0.55 0.2 264 / 0.5); /* Blue ring with transparency */
-  --chart-1: oklch(0.55 0.2 264); /* Blue chart color */
-  --chart-2: oklch(0.25 0.15 264); /* Dark blue chart color */
+  --ring: #20405A; /* Primary dark blue ring */
+  --chart-1: #20405A; /* Primary dark blue chart color */
+  --chart-2: #B78A2E; /* Primary gold chart color */
   --chart-3: oklch(0.646 0.222 41.116);
   --chart-4: oklch(0.577 0.245 27.325);
   --chart-5: oklch(0.4 0 0);
   --radius: 0.5rem; /* Reduced radius for cleaner look */
   --sidebar: oklch(0.97 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.25 0.15 264);
+  --sidebar-primary: #20405A;
   --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: oklch(0.55 0.2 264);
+  --sidebar-accent: #B78A2E;
   --sidebar-accent-foreground: oklch(1 0 0);
   --sidebar-border: oklch(0.85 0 0);
-  --sidebar-ring: oklch(0.55 0.2 264 / 0.5);
+  --sidebar-ring: #20405A;
 }
 
 .dark {
@@ -51,32 +51,32 @@
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.145 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.55 0.2 264);
+  --primary: #B78A2E;
   --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.25 0.15 264);
-  --secondary-foreground: oklch(0.985 0 0);
+  --secondary: #B78A2E;
+  --secondary-foreground: oklch(1 0 0);
   --muted: oklch(0.2 0 0);
   --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.55 0.2 264);
+  --accent: #B78A2E;
   --accent-foreground: oklch(1 0 0);
   --destructive: oklch(0.396 0.141 25.723);
   --destructive-foreground: oklch(0.637 0.237 25.331);
   --border: oklch(0.269 0 0);
   --input: oklch(0.2 0 0);
-  --ring: oklch(0.55 0.2 264 / 0.5);
-  --chart-1: oklch(0.55 0.2 264);
-  --chart-2: oklch(0.25 0.15 264);
+  --ring: #B78A2E;
+  --chart-1: #B78A2E;
+  --chart-2: #B78A2E;
   --chart-3: oklch(0.769 0.188 70.08);
   --chart-4: oklch(0.627 0.265 303.9);
   --chart-5: oklch(0.645 0.246 16.439);
   --sidebar: oklch(0.205 0 0);
   --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.55 0.2 264);
+  --sidebar-primary: #B78A2E;
   --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: oklch(0.25 0.15 264);
+  --sidebar-accent: #B78A2E;
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(0.269 0 0);
-  --sidebar-ring: oklch(0.55 0.2 264 / 0.5);
+  --sidebar-ring: #B78A2E;
 }
 
 @theme inline {
