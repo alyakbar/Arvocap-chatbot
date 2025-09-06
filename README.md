@@ -5,7 +5,91 @@ A comprehensive AI-powered chatbot solution for Arvocap Asset Managers, featurin
 ## 🌟 Features
 
 ### 🤖 AI-Powered Chatbot
-- **Trained Knowledge Base**: Custom-trained on Arvocap's investment data and fund performance
+- *3. **Backup and Recovery**
+   - Regular database backups
+   - Export knowledge base
+   - Save configuration files
+   - Document custom changes
+
+## 🔄 Integration Between Next.js and Python
+
+### Architecture Overview
+1. **API Communication**
+   - Next.js frontend makes HTTP requests to Python FastAPI
+   - WebSocket connection for real-time updates
+   - File uploads handled via multipart/form-data
+
+2. **Development Setup**
+   ```bash
+   # Terminal 1: Start Python API
+   cd python_training
+   python api_server.py
+
+   # Terminal 2: Start Next.js
+   npm run dev
+   ```
+
+3. **Production Setup**
+   ```bash
+   # Build Next.js
+   npm run build
+
+   # Start both services
+   # Terminal 1:
+   cd python_training
+   python api_server.py
+
+   # Terminal 2:
+   npm start
+   ```
+
+### Communication Flow
+1. **Chat Messages**
+   ```mermaid
+   sequenceDiagram
+     participant U as User
+     participant N as Next.js
+     participant P as Python API
+     participant V as Vector DB
+     
+     U->>N: Send message
+     N->>P: POST /api/chat
+     P->>V: Search context
+     V-->>P: Return matches
+     P-->>N: Response
+     N-->>U: Display response
+   ```
+
+2. **File Processing**
+   - Frontend uploads files to `/api/chatbot-knowledge`
+   - Python processes and chunks documents
+   - Embeddings generated and stored
+   - Status updates via WebSocket
+
+3. **Error Handling**
+   - Frontend retries on connection failures
+   - Backend queues long-running tasks
+   - Automatic reconnection for WebSocket
+
+### Development Tools
+1. **API Testing**
+   ```bash
+   # Test frontend-backend communication
+   curl http://localhost:8000/api/health
+   ```
+
+2. **WebSocket Testing**
+   ```bash
+   # Using wscat
+   wscat -c ws://localhost:8000/ws
+   ```
+
+3. **Monitoring**
+   - Next.js metrics at `/api/metrics`
+   - Python API metrics at `/metrics`
+   - WebSocket status at `/ws/status`
+
+## 📚 Usage Guidelinesd Knowledge Base**: Custom-trained on Arvocap's investment data and fund performance
 - **Dual AI Integration**: OpenAI GPT models with ChromaDB vector database
 - **Intelligent Responses**: Context-aware answers about investment strategies and fund performance
 - **Multiple Interfaces**: Web chat, CLI tool, and REST API
@@ -159,6 +243,72 @@ npm install
 
 # Run development server
 npm run dev
+
+# Build for production
+npm run build
+
+# Start production server
+npm start
+```
+
+### Next.js Frontend Details
+
+#### Component Structure
+```
+app/
+├── page.tsx              # Main chat interface
+├── admin/
+│   └── page.tsx         # Admin dashboard
+└── unified-admin/
+    └── page.tsx         # Enhanced admin interface
+```
+
+#### Key Features
+1. **Real-time Communication**
+   ```typescript
+   // components/arvocap-chatbot.tsx
+   const ChatComponent = () => {
+     // Websocket connection for real-time updates
+     const socket = useWebSocket('ws://localhost:8000/ws');
+     // ... rest of the component
+   };
+   ```
+
+2. **API Integration**
+   ```typescript
+   // lib/training-bridge.ts
+   export const sendMessage = async (message: string) => {
+     const response = await fetch('http://localhost:8000/api/chat', {
+       method: 'POST',
+       headers: { 'Content-Type': 'application/json' },
+       body: JSON.stringify({ message })
+     });
+     return response.json();
+   };
+   ```
+
+3. **Environment Configuration**
+   ```env
+   # .env.local
+   NEXT_PUBLIC_API_URL=http://localhost:8000
+   NEXT_PUBLIC_WS_URL=ws://localhost:8000
+   ```
+
+#### State Management
+- Uses React Context for global state
+- Real-time updates via WebSocket
+- Local storage for persistence
+
+#### Production Deployment
+```bash
+# Build optimized production bundle
+npm run build
+
+# Start production server
+npm start
+
+# Or use PM2 for process management
+pm2 start npm --name "arvocap-frontend" -- start
 ```
 
 ### Python Backend Setup
@@ -177,7 +327,122 @@ pip install -r python_training/requirements.txt
 python python_training/api_server.py
 ```
 
-## 📚 Usage Guidelines
+## � Starting the System
+
+### 1. Using Start Scripts
+Windows users:
+```bash
+# Double-click start-system.bat
+# Or run from command line:
+.\start-system.bat
+```
+
+Unix/macOS users:
+```bash
+# Make the script executable
+chmod +x start-system.sh
+# Run the script
+./start-system.sh
+```
+
+### 2. Manual Startup
+1. Start the Python Backend:
+```bash
+cd python_training
+python api_server.py
+```
+
+2. Start the Next.js Frontend:
+```bash
+# In a new terminal
+npm run dev
+```
+
+### 3. Verify System Status
+1. Backend API should be running at: http://localhost:8000
+2. Frontend should be accessible at: http://localhost:3000
+3. Admin panel available at: http://localhost:3000/admin
+
+## 💻 Operating the Chatbot
+
+### Initial Setup
+1. Access the admin panel at `/admin`
+2. Navigate to "Knowledge Base Management"
+3. Choose one or more methods to add knowledge:
+   - Upload documents
+   - Scrape websites
+   - Manual entry
+
+### Web Scraping
+```bash
+# Basic website scraping
+python scrape_and_build.py --url "https://your-website.com" --max-pages 1
+
+# Create training file from scraping
+python scrape_and_build.py --url "https://your-website.com" --max-pages 1 --create-training-file
+```
+
+### Document Processing
+1. Upload documents through admin interface
+2. System automatically:
+   - Extracts text (with OCR for images/scans)
+   - Chunks content
+   - Generates embeddings
+   - Updates vector database
+
+### Knowledge Base Management
+1. Monitor in admin panel:
+   - Total documents
+   - Processing status
+   - Vector database health
+2. Use rebuild tools if needed:
+```bash
+python rebuild_vector_db.py  # Rebuilds entire database
+python fix_vector_db.py      # Fixes inconsistencies
+```
+
+### Chatbot Operation
+1. **Basic Usage**
+   - Direct users to main chat interface
+   - Bot automatically:
+     - Processes user queries
+     - Searches vector database
+     - Generates contextual responses
+
+2. **Advanced Features**
+   - Use quick replies for common queries
+   - Enable source attribution
+   - Implement conversation memory
+   - Configure response parameters
+
+3. **Monitoring**
+   - View real-time chat logs
+   - Monitor API performance
+   - Track user interactions
+   - Review conversation history
+
+### System Maintenance
+1. **Regular Tasks**
+   - Check logs in `python_training/logs/`
+   - Monitor vector database size
+   - Update knowledge base as needed
+   - Verify API performance
+
+2. **Troubleshooting**
+   - Use debug tools:
+   ```bash
+   python debug_faiss.py        # Debug vector database
+   python test_api_server.py    # Test API endpoints
+   python check_manual_entries.py # Verify manual entries
+   ```
+
+3. **Backup and Recovery**
+   - Regular database backups
+   - Export knowledge base
+   - Save configuration files
+   - Document custom changes
+
+## �📚 Usage Guidelines
 
 ### Adding Knowledge
 1. **Document Upload**
