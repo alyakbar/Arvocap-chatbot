@@ -1,12 +1,21 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { Upload, FileText, Globe, Trash2, Eye, RefreshCw, Plus, Brain, Database } from 'lucide-react'
+import { Upload, FileText, Globe, Trash2, Eye, RefreshCw, Plus, Brain, Database, Edit, Save, X } from 'lucide-react'
+
+// Debounce function to optimize state updates
+function debounce<T extends (...args: any[]) => void>(func: T, wait: number): (...args: Parameters<T>) => void {
+  let timeout: NodeJS.Timeout | null = null;
+  return (...args: Parameters<T>) => {
+    if (timeout) clearTimeout(timeout);
+    timeout = setTimeout(() => func(...args), wait);
+  };
+}
 
 interface TrainingProgress {
   status: 'idle' | 'processing' | 'complete' | 'error'
@@ -19,7 +28,7 @@ interface KnowledgeItem {
   type: 'document' | 'website' | 'manual'
   title: string
   content: string
-  timestamp: Date
+  timestamp: string | Date
   size: number
   status: 'active' | 'processing' | 'error'
 }
@@ -29,7 +38,7 @@ interface TrainingStats {
   totalWebsites: number
   manualEntries: number
   knowledgeBaseSize: number
-  lastTrained: Date | null
+  lastTrained: string | Date | null
 }
 
 export default function AdminTraining() {
@@ -54,9 +63,22 @@ export default function AdminTraining() {
   const [websiteUrl, setWebsiteUrl] = useState('')
   const [scrapingDepth, setScrapingDepth] = useState(2)
   
-  // Manual entry states
+  // Manual entry states with local and debounced state
+  const [localManualTitle, setLocalManualTitle] = useState('')
+  const [localManualContent, setLocalManualContent] = useState('')
   const [manualTitle, setManualTitle] = useState('')
   const [manualContent, setManualContent] = useState('')
+  
+  // Debounced setters for manual entry
+  const debouncedSetManualTitle = useCallback(
+    debounce((value: string) => setManualTitle(value), 300),
+    []
+  )
+  
+  const debouncedSetManualContent = useCallback(
+    debounce((value: string) => setManualContent(value), 300),
+    []
+  )
   
   // OCR processing
   const [ocrEnabled, setOcrEnabled] = useState(true)
@@ -68,6 +90,11 @@ export default function AdminTraining() {
     temperature: 0.7,
     maxTokens: 2000
   })
+
+  // Edit modal state
+  const [editingItem, setEditingItem] = useState<KnowledgeItem | null>(null)
+  const [editTitle, setEditTitle] = useState('')
+  const [editContent, setEditContent] = useState('')
 
   useEffect(() => {
     loadKnowledgeBase()
@@ -199,7 +226,7 @@ export default function AdminTraining() {
   }
 
   const handleManualEntry = async () => {
-    if (!manualTitle.trim() || !manualContent.trim()) return
+    if (!localManualTitle.trim() || !localManualContent.trim()) return
 
     setTrainingProgress({ 
       status: 'processing', 
@@ -211,8 +238,8 @@ export default function AdminTraining() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          title: manualTitle,
-          content: manualContent,
+          title: localManualTitle,
+          content: localManualContent,
           chunkSize: trainingConfig.chunkSize,
           chunkOverlap: trainingConfig.chunkOverlap
         })
@@ -223,6 +250,9 @@ export default function AdminTraining() {
           status: 'complete', 
           message: 'Manual entry added successfully' 
         })
+        // Clear both local and debounced state
+        setLocalManualTitle('')
+        setLocalManualContent('')
         setManualTitle('')
         setManualContent('')
         loadKnowledgeBase()
@@ -286,6 +316,45 @@ export default function AdminTraining() {
     } catch (error) {
       console.error('Failed to delete item:', error)
     }
+  }
+
+  const handleEditItem = (item: KnowledgeItem) => {
+    setEditingItem(item)
+    setEditTitle(item.title)
+    setEditContent(item.content)
+  }
+
+  const handleSaveEdit = async () => {
+    if (!editingItem) return
+
+    try {
+      const response = await fetch(`/api/admin/knowledge-base/${editingItem.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title: editTitle,
+          content: editContent
+        })
+      })
+
+      if (response.ok) {
+        setEditingItem(null)
+        setEditTitle('')
+        setEditContent('')
+        loadKnowledgeBase()
+        loadStats()
+      }
+    } catch (error) {
+      console.error('Failed to update item:', error)
+    }
+  }
+
+  const handleCancelEdit = () => {
+    setEditingItem(null)
+    setEditTitle('')
+    setEditContent('')
   }
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -356,7 +425,7 @@ export default function AdminTraining() {
           </div>
           {stats.lastTrained && (
             <div className="mt-4 text-center text-sm text-muted-foreground">
-              Last trained: {stats.lastTrained.toLocaleString()}
+              Last trained: {new Date(stats.lastTrained).toLocaleString()}
             </div>
           )}
         </CardContent>
@@ -516,8 +585,12 @@ export default function AdminTraining() {
             <label className="text-sm font-medium mb-2 block">Title</label>
             <Input
               placeholder="Enter a descriptive title"
-              value={manualTitle}
-              onChange={(e) => setManualTitle(e.target.value)}
+              value={localManualTitle}
+              onChange={(e) => {
+                const value = e.target.value;
+                setLocalManualTitle(value); // Update local state immediately
+                debouncedSetManualTitle(value); // Debounce the update to main state
+              }}
             />
           </div>
           
@@ -526,14 +599,18 @@ export default function AdminTraining() {
             <textarea
               className="w-full min-h-[120px] p-3 border rounded-md resize-none"
               placeholder="Enter the information you want to add to the knowledge base..."
-              value={manualContent}
-              onChange={(e) => setManualContent(e.target.value)}
+              value={localManualContent}
+              onChange={(e) => {
+                const value = e.target.value;
+                setLocalManualContent(value); // Update local state immediately
+                debouncedSetManualContent(value); // Debounce the update to main state
+              }}
             />
           </div>
           
           <Button 
             onClick={handleManualEntry}
-            disabled={!manualTitle.trim() || !manualContent.trim() || trainingProgress.status === 'processing'}
+            disabled={!localManualTitle.trim() || !localManualContent.trim() || trainingProgress.status === 'processing'}
             className="w-full"
           >
             Add to Knowledge Base
@@ -614,18 +691,28 @@ export default function AdminTraining() {
                   <div className="flex-1 min-w-0">
                     <div className="font-medium truncate">{item.title}</div>
                     <div className="text-sm text-muted-foreground">
-                      {item.type} • {item.size} characters • {item.timestamp.toLocaleDateString()}
+                      {item.type} • {item.size} characters • {new Date(item.timestamp).toLocaleDateString()}
                     </div>
                   </div>
                   
-                  <Button
-                    onClick={() => handleDeleteItem(item.id)}
-                    variant="outline"
-                    size="sm"
-                    className="text-red-600 hover:text-red-700"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={() => handleEditItem(item)}
+                      variant="outline"
+                      size="sm"
+                      className="text-blue-600 hover:text-blue-700"
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      onClick={() => handleDeleteItem(item.id)}
+                      variant="outline"
+                      size="sm"
+                      className="text-red-600 hover:text-red-700"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
               ))}
               
@@ -638,6 +725,63 @@ export default function AdminTraining() {
           </ScrollArea>
         </CardContent>
       </Card>
+
+      {/* Edit Modal */}
+      {editingItem && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-bold">Edit Knowledge Base Item</h2>
+              <Button
+                onClick={handleCancelEdit}
+                variant="outline"
+                size="sm"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm font-medium mb-2 block">Title</label>
+                <Input
+                  value={editTitle}
+                  onChange={(e) => setEditTitle(e.target.value)}
+                  placeholder="Enter title"
+                />
+              </div>
+              
+              <div>
+                <label className="text-sm font-medium mb-2 block">Content</label>
+                <textarea
+                  className="w-full h-64 p-3 border rounded-md resize-none"
+                  value={editContent}
+                  onChange={(e) => setEditContent(e.target.value)}
+                  placeholder="Enter content"
+                />
+              </div>
+              
+              <div className="flex gap-2 pt-4">
+                <Button
+                  onClick={handleSaveEdit}
+                  disabled={!editTitle.trim() || !editContent.trim()}
+                  className="flex-1"
+                >
+                  <Save className="h-4 w-4 mr-2" />
+                  Save Changes
+                </Button>
+                <Button
+                  onClick={handleCancelEdit}
+                  variant="outline"
+                  className="flex-1"
+                >
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

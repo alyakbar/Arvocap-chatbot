@@ -297,17 +297,20 @@ export class TrainingBridge {
     chunkOverlap: number
   }): Promise<{ success: boolean; chunksCreated?: number; error?: string }> {
     try {
+      // Format the content
+      const formattedContent = {
+        title: params.title,
+        content: params.content,
+        chunk_size: params.chunkSize,
+        chunk_overlap: params.chunkOverlap
+      }
+
       const response = await fetch(`${this.config.apiUrl}/admin/add_manual_entry`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          title: params.title,
-          content: params.content,
-          chunk_size: params.chunkSize,
-          chunk_overlap: params.chunkOverlap
-        })
+        body: JSON.stringify(formattedContent)
       })
 
       if (!response.ok) {
@@ -392,6 +395,34 @@ export class TrainingBridge {
       return { success: data.success }
     } catch (error) {
       console.error("Knowledge base item deletion failed:", error)
+      return { 
+        success: false, 
+        error: error instanceof Error ? error.message : "Unknown error" 
+      }
+    }
+  }
+
+  /**
+   * Update knowledge base item
+   */
+  async updateKnowledgeItem(id: string, updates: { title: string; content: string }): Promise<{ success: boolean; error?: string }> {
+    try {
+      const response = await fetch(`${this.config.apiUrl}/admin/knowledge_base/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updates)
+      })
+
+      if (!response.ok) {
+        throw new Error(`Update failed: ${response.status}`)
+      }
+
+      const data = await response.json()
+      return { success: data.success }
+    } catch (error) {
+      console.error("Knowledge base item update failed:", error)
       return { 
         success: false, 
         error: error instanceof Error ? error.message : "Unknown error" 

@@ -32,8 +32,8 @@ A comprehensive AI-powered chatbot solution for Arvocap Asset Managers, featurin
 
 ```
 ┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
-│   Web Frontend  │    │   Python API     │    │  Vector Database│
-│   (Next.js)     │◄──►│   (FastAPI)      │◄──►│   (ChromaDB)    │
+│   Web Frontend  │    │   Python API     │    │ Vector Databases│
+│   (Next.js)     │◄──►│   (FastAPI)      │◄──►│ FAISS/ChromaDB  │
 │                 │    │                  │    │                 │
 │  ┌─────────────┐│    │ ┌──────────────┐ │    │ ┌─────────────┐ │
 │  │  Chat UI    ││    │ │ ChatBot      │ │    │ │ Embeddings  │ │
@@ -48,6 +48,207 @@ A comprehensive AI-powered chatbot solution for Arvocap Asset Managers, featurin
                         │   (GPT Models)   │
                         └──────────────────┘
 ```
+
+## 📁 Project Structure
+
+```
+arvocap-chatbot/
+├── app/                          # Next.js application directory
+│   ├── globals.css              # Global styles
+│   ├── layout.tsx              # Root layout component
+│   ├── page.tsx               # Homepage
+│   ├── admin/                 # Admin panel routes
+│   │   └── page.tsx          # Admin dashboard
+│   ├── api/                  # API routes
+│   │   ├── admin/           # Admin API endpoints
+│   │   ├── chat/           # Chat API endpoints
+│   │   ├── chatbot-knowledge/ # Knowledge base endpoints
+│   │   ├── contact/       # Contact form endpoints
+│   │   └── save-contact/  # Contact storage endpoints
+│   └── unified-admin/     # Unified admin interface
+│
+├── components/            # React components
+│   ├── admin-training.tsx   # Knowledge base training interface
+│   ├── arvocap-chatbot.tsx # Main chatbot component
+│   ├── contact-form.tsx    # Contact form component
+│   ├── theme-provider.tsx  # Theme provider component
+│   └── ui/                # UI components
+│       ├── badge.tsx      # Badge component
+│       ├── button.tsx     # Button component
+│       ├── card.tsx       # Card component
+│       ├── input.tsx      # Input component
+│       └── scroll-area.tsx # Scrollable area component
+│
+├── lib/                   # Shared utilities and libraries
+│   ├── google-sheets.ts   # Google Sheets integration
+│   ├── runtime-config.ts  # Runtime configuration
+│   ├── training-bridge.ts # Bridge between Next.js and Python
+│   └── utils.ts          # Utility functions
+│
+├── public/               # Static files
+│   ├── images/          # Image assets
+│   └── various assets   # Other static files
+│
+├── python_training/      # Python backend for AI/ML
+│   ├── api_server.py     # FastAPI server for chatbot
+│   ├── chatbot_trainer.py # Training logic and model management
+│   ├── config.py         # Configuration settings
+│   ├── vector_database.py # FAISS vector storage system
+│   ├── web_scraper.py    # Web scraping functionality
+│   ├── text_processor.py # Text processing utilities
+│   └── various utilities # Additional Python modules
+```
+
+## 🚀 Component Details
+
+### Frontend Components
+
+#### 1. Chatbot Component (`components/arvocap-chatbot.tsx`)
+- Real-time chat interface with typing indicators
+- Message history management
+- Source attribution for responses
+- Quick replies and suggestions
+- Human handoff capability
+
+#### 2. Admin Training Interface (`components/admin-training.tsx`)
+- Document upload with drag-and-drop
+- Website scraping interface
+- Manual content entry with debounced input
+- Training progress monitoring
+- Knowledge base statistics
+
+#### 3. Contact Form (`components/contact-form.tsx`)
+- Multi-step form interface
+- Validation and error handling
+- Google Sheets integration
+- Automatic email notifications
+
+### Backend Services
+
+#### 1. API Server (`python_training/api_server.py`)
+- FastAPI endpoints for chat and admin operations
+- Rate limiting and error handling
+- Session management
+- Logging and monitoring
+
+#### 2. Vector Databases
+##### FAISS Database (`python_training/faiss_vector_db.py`)
+- High-performance similarity search
+- Optimized for large-scale datasets
+- Fast nearest neighbor search
+- Efficient index management
+
+##### ChromaDB Database (`python_training/vector_database.py`)
+- Document chunking and embedding
+- Rich metadata management
+- Incremental updates
+- Persistent storage with versioning
+
+#### 3. Web Scraper (`python_training/web_scraper.py`)
+- Configurable depth and breadth
+- JavaScript rendering support
+- Rate limiting and retry logic
+- Content deduplication
+
+## 🛠️ Setup Instructions
+
+### Frontend Setup
+```bash
+# Install dependencies
+npm install
+
+# Run development server
+npm run dev
+```
+
+### Python Backend Setup
+```bash
+# Create virtual environment
+python -m venv env
+
+# Activate environment
+.\env\Scripts\activate  # Windows
+source env/bin/activate # Unix/macOS
+
+# Install dependencies
+pip install -r python_training/requirements.txt
+
+# Run API server
+python python_training/api_server.py
+```
+
+## 📚 Usage Guidelines
+
+### Adding Knowledge
+1. **Document Upload**
+   - Supported formats: PDF, DOCX, TXT
+   - OCR support for scanned documents
+   - Automatic chunking and processing
+
+2. **Web Scraping**
+   - Enter target URL and depth
+   - Configure scraping parameters
+   - Monitor scraping progress
+
+3. **Manual Entry**
+   - Add structured content
+   - Real-time preview
+   - Source attribution
+
+### Training the System
+1. Configure chunk size and overlap
+2. Set temperature and token limits
+3. Monitor training progress
+4. Validate results
+
+### Using the Chatbot
+1. Natural language queries
+2. View source references
+3. Quick replies for common questions
+4. Human support escalation
+
+## ⚙️ Configuration
+
+### Environment Variables
+Create a `.env` file with:
+```env
+OPENAI_API_KEY=your_api_key
+GOOGLE_SHEETS_ID=your_sheet_id
+PYTHON_API_URL=http://localhost:8000
+```
+
+### Training Configuration
+Adjust in `python_training/config.py`:
+```python
+MAX_TEXT_LENGTH = 1000
+CHUNK_SIZE = 500
+CHUNK_OVERLAP = 100
+```
+
+## 🔧 Troubleshooting
+
+### Common Issues
+1. **Knowledge Base Not Updating**
+   - Check Python backend connection
+   - Verify file permissions
+   - Check log files
+
+2. **Slow Responses**
+   - Optimize vector database
+   - Adjust chunk sizes
+   - Check network connectivity
+
+3. **Training Errors**
+   - Verify input data
+   - Check disk space
+   - Monitor memory usage
+
+## 📞 Support
+
+For technical support:
+- Email: support@arvocap.com
+- Documentation: `/docs`
+- Log files: `/python_training/logs`
 
 ## 🚀 Quick Start
 

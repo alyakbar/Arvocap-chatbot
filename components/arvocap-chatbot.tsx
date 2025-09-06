@@ -9,12 +9,20 @@ import { Badge } from "@/components/ui/badge"
 import { MessageCircle, Send, User, Bot, Phone } from "lucide-react"
 import Image from "next/image"
 
+interface SourceRef {
+  label: string
+  sourceType: string
+  url?: string
+  score?: number
+}
+
 interface Message {
   id: string
   type: "user" | "bot"
   content: string
   timestamp: Date
   isQuickReply?: boolean
+  sources?: SourceRef[]
 }
 
 interface FAQ {
@@ -74,7 +82,7 @@ const quickReplies = [
   "Contact information",
 ]
   
-type ChatResult = { message: string; usedKnowledge: boolean }
+type ChatResult = { message: string; usedKnowledge: boolean; sources?: SourceRef[] }
 
 // Simple response cache for faster repeated queries
 const responseCache = new Map<string, { result: ChatResult; timestamp: number }>()
@@ -113,11 +121,19 @@ const callChatGPT = async (userQuery: string, faqContext?: string): Promise<Chat
       if (pythonResponse.ok) {
         const pythonData = await pythonResponse.json()
         console.log("✅ Using trained Python chatbot response:", pythonData)
-        const result = {
+        const sources: SourceRef[] | undefined = Array.isArray(pythonData.sources)
+          ? pythonData.sources.map((s: any) => ({
+              label: s.label || s.metadata?.title || s.metadata?.url || 'Source',
+              sourceType: s.sourceType || s.metadata?.sourceType || 'document',
+              url: s.metadata?.url || (typeof s.label === 'string' && s.label.startsWith('http') ? s.label : undefined),
+              score: typeof s.score === 'number' ? s.score : undefined
+            }))
+          : undefined
+        const result: ChatResult = {
           message: pythonData.response || pythonData.message || "I'm here to help with your investment questions!",
-          usedKnowledge: true
+          usedKnowledge: true,
+          sources
         }
-        
         // Cache successful responses
         responseCache.set(cacheKey, { result, timestamp: Date.now() })
         return result
@@ -226,7 +242,7 @@ const callChatGPT = async (userQuery: string, faqContext?: string): Promise<Chat
       }
 
       return {
-        message: "I'm temporarily having trouble processing your request. Please try again in a moment.",
+        message: "I'm temporarily having trouble processing your request. Kindly rephrase the question?",
         usedKnowledge: false,
       }
     }
@@ -376,13 +392,15 @@ export function ArvocapChatbot() {
     await new Promise((resolve) => setTimeout(resolve, 1000))
 
     // Skip FAQ matching completely - always use Python chatbot (same as CLI)
-    let botResponse: string | null = null
+  let botResponse: string | null = null
+  let botSources: SourceRef[] | undefined = undefined
     let shouldShowContactForm = false
 
     // Always use Python chatbot directly (no FAQ interference)
     try {
-      const result = await callChatGPT(content) // Remove FAQ context to get pure Python/OpenAI response
-      botResponse = result.message
+  const result = await callChatGPT(content) // Remove FAQ context to get pure Python/OpenAI response
+  botResponse = result.message
+  botSources = result.sources
       
       // Only show contact form if the response explicitly suggests it
       if (!result.usedKnowledge && (!botResponse || botResponse.includes("connect you with") || botResponse.includes("talk to human"))) {
@@ -407,6 +425,7 @@ export function ArvocapChatbot() {
       type: "bot",
       content: botResponse,
       timestamp: new Date(),
+      sources: botSources
     }
 
     setMessages((prev) => [...prev, botMessage])
@@ -574,29 +593,84 @@ export function ArvocapChatbot() {
         <ScrollArea className="flex-1 p-3 md:p-4 min-h-0" ref={scrollAreaRef}>
           <div className="space-y-3 md:space-y-4">
             {messages.map((message) => (
-              <div
-                key={message.id}
-                className={`flex gap-2 md:gap-3 ${message.type === "user" ? "justify-end" : "justify-start"}`}
-              >
-                {message.type === "bot" && (
-                  <div className="w-7 h-7 md:w-8 md:h-8 bg-primary rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                    <Bot className="h-3 w-3 md:h-4 md:w-4 text-primary-foreground" />
-                  </div>
-                )}
+              <div key={message.id} className="space-y-1">
                 <div
-                  className={`max-w-[calc(100%-3rem)] md:max-w-[280px] p-2 md:p-3 rounded-lg whitespace-pre-line text-sm md:text-base ${
-                    message.type === "user"
-                      ? "bg-secondary text-secondary-foreground"
-                      : "bg-muted text-muted-foreground"
-                  }`}
+                  className={`flex gap-2 md:gap-3 ${message.type === "user" ? "justify-end" : "justify-start"}`}
                 >
-                  {message.content}
-                </div>
-                {message.type === "user" && (
-                  <div className="w-7 h-7 md:w-8 md:h-8 bg-secondary rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                    <User className="h-3 w-3 md:h-4 md:w-4 text-secondary-foreground" />
+                  {message.type === "bot" && (
+                    <div className="w-7 h-7 md:w-8 md:h-8 bg-primary rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                      <Bot className="h-3 w-3 md:h-4 md:w-4 text-primary-foreground" />
+                    </div>
+                  )}
+                  <div
+                    className={`max-w-[calc(100%-3rem)] md:max-w-[280px] p-2 md:p-3 rounded-lg whitespace-pre-line text-sm md:text-base ${
+                      message.type === "user"
+                        ? "bg-secondary text-secondary-foreground"
+                        : "bg-muted text-muted-foreground"
+                    }`}
+                  >
+                    {message.content}
+                    {message.type === 'bot' && message.sources && message.sources.length > 0 && (
+                      <div className="mt-3 border-t pt-2">
+                        <p className="text-[10px] uppercase tracking-wide font-semibold mb-1 opacity-70">Sources</p>
+                        <ul className="space-y-1">
+                          {message.sources.slice(0,5).map((s, idx) => {
+                            // Format the label based on source type
+                            let displayLabel = s.label;
+                            let displayUrl = s.url;
+                            
+                            if (s.sourceType === 'pdf') {
+                              // Extract just the PDF filename from the path
+                              displayLabel = s.label.split('\\').pop()?.split('/').pop() || s.label;
+                              if (displayLabel.toLowerCase().endsWith('.pdf')) {
+                                displayLabel = displayLabel.slice(0, -4); // Remove .pdf extension
+                              }
+                            } else if (s.url) {
+                              // For web sources, try to make the URL more readable
+                              try {
+                                const urlObj = new URL(s.url);
+                                displayUrl = `${urlObj.hostname}${urlObj.pathname}`;
+                                if (displayUrl.endsWith('/')) {
+                                  displayUrl = displayUrl.slice(0, -1);
+                                }
+                              } catch {
+                                displayUrl = s.url;
+                              }
+                            }
+
+                            return (
+                              <li key={idx} className="text-[11px] leading-snug flex gap-1 items-start">
+                                <span className="font-medium text-xs">[{idx+1}]</span>
+                                {s.url ? (
+                                  <a
+                                    href={s.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="underline hover:no-underline break-all"
+                                    title={s.label} // Show full path on hover
+                                  >
+                                    {displayLabel.length > 80 ? displayLabel.slice(0,77)+"..." : displayLabel}
+                                    {s.sourceType === 'webpage' && (
+                                      <span className="opacity-60 ml-1">({displayUrl})</span>
+                                    )}
+                                  </a>
+                                ) : (
+                                  <span>{displayLabel}</span>
+                                )}
+                                <span className="ml-auto text-[10px] opacity-60 capitalize">{s.sourceType}</span>
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      </div>
+                    )}
                   </div>
-                )}
+                  {message.type === "user" && (
+                    <div className="w-7 h-7 md:w-8 md:h-8 bg-secondary rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                      <User className="h-3 w-3 md:h-4 md:w-4 text-secondary-foreground" />
+                    </div>
+                  )}
+                </div>
               </div>
             ))}
 
