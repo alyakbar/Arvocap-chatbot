@@ -99,7 +99,7 @@ const callChatGPT = async (userQuery: string, faqContext?: string): Promise<Chat
     }
 
     // Always try Python chatbot first (same as CLI) - bypass FAQ context
-    const pythonApiUrl = process.env.NEXT_PUBLIC_PYTHON_API_URL || "https://a53e50afcb91.ngrok-free.app"
+    const pythonApiUrl = process.env.NEXT_PUBLIC_PYTHON_API_URL || "https://cad4984aaf6e.ngrok-free.app"
     
     try {
       console.log("🔗 Attempting to connect to Python API:", pythonApiUrl)
