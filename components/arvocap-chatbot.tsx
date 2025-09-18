@@ -68,7 +68,7 @@ const faqs: FAQ[] = [
     id: "5",
     category: "General",
     question: "How can I get started with ArvoCap?",
-    answer: "Contact our team at invest@arvocap.com or call +254 701 300 200 to discuss your investment goals.",
+    answer: "Contact our team at clients@arvocap.com or call +254 701 300 200 to discuss your investment goals.",
     keywords: ["get started", "contact", "invest", "begin"],
   }
 ]
@@ -99,7 +99,7 @@ const callChatGPT = async (userQuery: string, faqContext?: string): Promise<Chat
     }
 
     // Always try Python chatbot first (same as CLI) - bypass FAQ context
-    const pythonApiUrl = process.env.NEXT_PUBLIC_PYTHON_API_URL || "https://cad4984aaf6e.ngrok-free.app"
+    const pythonApiUrl = process.env.NEXT_PUBLIC_PYTHON_API_URL || "https://eb71521c4785.ngrok-free.app"
     
     try {
       console.log("🔗 Attempting to connect to Python API:", pythonApiUrl)
