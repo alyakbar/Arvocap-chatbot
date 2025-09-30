@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Badge } from "@/components/ui/badge"
-import { MessageCircle, Send, User, Bot, Phone } from "lucide-react"
+import { MessageCircle, Send, User, Bot, Phone, Link2 } from "lucide-react"
 import Image from "next/image"
 
 interface SourceRef {
@@ -610,28 +610,35 @@ export function ArvocapChatbot() {
                     }`}
                   >
                     {message.content}
-                    {/* Add inline reference links for websites only */}
-                    {message.type === 'bot' && message.sources && message.sources.length > 0 && 
-                      message.sources
-                        .filter((s: SourceRef) => s.sourceType === 'webpage' && s.url)
-                        .map((source: SourceRef, idx: number) => {
-                          const refNumber = idx + 1;
-                          return (
-                            <span key={idx}>
-                              {' '}
+                    {/* Inline website source indicators (icon only, subtle) */}
+                    {message.type === 'bot' && message.sources && (() => {
+                      const websiteSources = message.sources.filter((s: SourceRef) => s.sourceType === 'webpage' && s.url)
+                      if (!websiteSources.length) return null
+                      return (
+                        <span className="inline-flex items-center gap-1 ml-1 align-baseline select-none">
+                          {websiteSources.slice(0,3).map((s: SourceRef, idx: number) => {
+                            let domain: string | undefined
+                            try {
+                              const u = new URL(s.url as string)
+                              domain = u.hostname.replace(/^www\./,'')
+                            } catch {}
+                            return (
                               <a
-                                href={source.url}
+                                key={idx}
+                                href={s.url}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-blue-600 hover:text-blue-800 underline text-sm"
-                                title={source.label}
+                                className="text-muted-foreground/60 hover:text-primary/80 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary rounded p-[2px] -m-[2px] transition-colors"
+                                title={`${domain ? domain + ' — ' : ''}${s.label || s.url}`}
+                                aria-label={`Source ${idx+1}${domain ? ' ' + domain : ''}`}
                               >
-                                [{refNumber}]
+                                <Link2 className="h-3 w-3" />
                               </a>
-                            </span>
-                          );
-                        })
-                    }
+                            )
+                          })}
+                        </span>
+                      )
+                    })()}
                   </div>
                   {message.type === "user" && (
                     <div className="w-7 h-7 md:w-8 md:h-8 bg-secondary rounded-full flex items-center justify-center flex-shrink-0 mt-1">
