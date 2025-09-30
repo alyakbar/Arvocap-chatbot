@@ -610,60 +610,28 @@ export function ArvocapChatbot() {
                     }`}
                   >
                     {message.content}
-                    {message.type === 'bot' && message.sources && message.sources.length > 0 && (
-                      <div className="mt-3 border-t pt-2">
-                        <p className="text-[10px] uppercase tracking-wide font-semibold mb-1 opacity-70">Sources</p>
-                        <ul className="space-y-1">
-                          {message.sources.slice(0,5).map((s, idx) => {
-                            // Format the label based on source type
-                            let displayLabel = s.label;
-                            let displayUrl = s.url;
-                            
-                            if (s.sourceType === 'pdf') {
-                              // Extract just the PDF filename from the path
-                              displayLabel = s.label.split('\\').pop()?.split('/').pop() || s.label;
-                              if (displayLabel.toLowerCase().endsWith('.pdf')) {
-                                displayLabel = displayLabel.slice(0, -4); // Remove .pdf extension
-                              }
-                            } else if (s.url) {
-                              // For web sources, try to make the URL more readable
-                              try {
-                                const urlObj = new URL(s.url);
-                                displayUrl = `${urlObj.hostname}${urlObj.pathname}`;
-                                if (displayUrl.endsWith('/')) {
-                                  displayUrl = displayUrl.slice(0, -1);
-                                }
-                              } catch {
-                                displayUrl = s.url;
-                              }
-                            }
-
-                            return (
-                              <li key={idx} className="text-[11px] leading-snug flex gap-1 items-start">
-                                <span className="font-medium text-xs">[{idx+1}]</span>
-                                {s.url ? (
-                                  <a
-                                    href={s.url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="underline hover:no-underline break-all"
-                                    title={s.label} // Show full path on hover
-                                  >
-                                    {displayLabel.length > 80 ? displayLabel.slice(0,77)+"..." : displayLabel}
-                                    {s.sourceType === 'webpage' && (
-                                      <span className="opacity-60 ml-1">({displayUrl})</span>
-                                    )}
-                                  </a>
-                                ) : (
-                                  <span>{displayLabel}</span>
-                                )}
-                                <span className="ml-auto text-[10px] opacity-60 capitalize">{s.sourceType}</span>
-                              </li>
-                            );
-                          })}
-                        </ul>
-                      </div>
-                    )}
+                    {/* Add inline reference links for websites only */}
+                    {message.type === 'bot' && message.sources && message.sources.length > 0 && 
+                      message.sources
+                        .filter((s: SourceRef) => s.sourceType === 'webpage' && s.url)
+                        .map((source: SourceRef, idx: number) => {
+                          const refNumber = idx + 1;
+                          return (
+                            <span key={idx}>
+                              {' '}
+                              <a
+                                href={source.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-blue-600 hover:text-blue-800 underline text-sm"
+                                title={source.label}
+                              >
+                                [{refNumber}]
+                              </a>
+                            </span>
+                          );
+                        })
+                    }
                   </div>
                   {message.type === "user" && (
                     <div className="w-7 h-7 md:w-8 md:h-8 bg-secondary rounded-full flex items-center justify-center flex-shrink-0 mt-1">
